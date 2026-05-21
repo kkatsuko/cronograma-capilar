@@ -76,3 +76,83 @@ h2 {
 
   font-size: 16px;
 }
+
+#config-btn {
+  margin-top: 20px;
+
+  border: none;
+
+  padding: 12px 18px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  background: #ece7ff;
+}
+
+.hidden {
+  display: none;
+}
+
+#config-panel {
+  margin-top: 20px;
+
+  text-align: left;
+}
+
+.week-buttons {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-bottom: 15px;
+}
+
+.day-btn {
+  border: none;
+
+  padding: 10px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  background: #eee;
+}
+
+.day-btn.active {
+  background: #7b5cff;
+  color: white;
+}
+
+#sequence-input {
+  width: 100%;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  border: 1px solid #ddd;
+
+  margin-bottom: 15px;
+
+  box-sizing: border-box;
+}
+
+#save-config {
+  width: 100%;
+
+  border: none;
+
+  padding: 14px;
+
+  border-radius: 12px;
+
+  background: #7b5cff;
+
+  color: white;
+
+  cursor: pointer;
+}
