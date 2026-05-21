@@ -17,42 +17,102 @@
 
 <body>
 
-  <div class="card">
+  <div class="container">
 
     <h1>✨ Meu Cronograma</h1>
 
-    <p class="subtitle">
-      Próxima lavagem:
-    </p>
 
-    <h2 id="today-task">
-      💧 Hidratação
-    </h2>
+    <!-- TÔNICO -->
 
+    <div class="card">
 
-    <button id="done-btn">
-      ✔ Lavei hoje
-    </button>
+      <h2>🌱 Tônico hoje</h2>
 
+      <p id="tonic-status">
+        SIM
+      </p>
 
-    <button id="config-btn">
-      ⚙ Configurar sequência
-    </button>
-
-
-    <div id="config-panel" class="hidden">
-
-      <h3>Sua sequência</h3>
-
-      <input
-        type="text"
-        id="sequence-input"
-        placeholder="Ex: H N H R"
-      >
-
-      <button id="save-config">
-        💾 Salvar sequência
+      <button id="tonic-btn">
+        ✔ Tônico OK
       </button>
+
+    </div>
+
+
+    <!-- PRÓXIMA ETAPA -->
+
+    <div class="card">
+
+      <h2>✨ Próxima etapa</h2>
+
+      <p id="next-step">
+        💧 Hidratação
+      </p>
+
+      <button id="step-btn">
+        ✔ Etapa feita
+      </button>
+
+    </div>
+
+
+    <!-- LAVAGEM -->
+
+    <div class="card">
+
+      <h2>🚿 Última lavagem</h2>
+
+      <p id="last-wash">
+        Hoje
+      </p>
+
+      <button id="wash-btn">
+        ✔ Lavei hoje
+      </button>
+
+    </div>
+
+
+    <!-- CONFIG -->
+
+    <div class="card">
+
+      <h2>⚙ Configurar sequência</h2>
+
+
+      <div class="sequence-buttons">
+
+        <button class="seq-btn" data-step="H">
+          💧 H
+        </button>
+
+        <button class="seq-btn" data-step="N">
+          🥥 N
+        </button>
+
+        <button class="seq-btn" data-step="R">
+          🧬 R
+        </button>
+
+      </div>
+
+
+      <div id="sequence-preview">
+        Sua sequência:
+      </div>
+
+
+      <div class="config-actions">
+
+        <button id="undo-btn">
+          ↩ Apagar último
+        </button>
+
+        <button id="save-sequence-btn">
+          ✔ Sequência OK
+        </button>
+
+      </div>
 
     </div>
 
