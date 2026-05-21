@@ -397,6 +397,16 @@ resetBtn.addEventListener("click", () => {
 
 });
 
+// =========================
+// IR PARA RELATÓRIOS
+// =========================
+
+reportsBtn.addEventListener("click", () => {
+
+  window.location.href =
+    "relatorios.html";
+
+});
 
 // =========================
 // SERVICE WORKER
