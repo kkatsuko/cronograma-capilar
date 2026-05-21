@@ -110,3 +110,30 @@ button {
 
   color: white;
 }
+#config-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  cursor: pointer;
+}
+
+#toggle-config {
+  font-size: 20px;
+}
+
+#config-content {
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+#reset-btn {
+  background: #ffe2e2;
+
+  margin-top: 10px;
+}
