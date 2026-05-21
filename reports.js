@@ -105,35 +105,102 @@ function deleteHistory(index) {
 // EDITAR ITEM
 // =========================
 
+let currentEditIndex = null;
+
+const editModal =
+  document.getElementById("edit-modal");
+
+const editDate =
+  document.getElementById("edit-date");
+
+const editTime =
+  document.getElementById("edit-time");
+
+const cancelEdit =
+  document.getElementById("cancel-edit");
+
+const saveEdit =
+  document.getElementById("save-edit");
+
+
 function editHistory(index) {
+
+  currentEditIndex = index;
 
   const item =
     history[index];
 
-  const currentDate =
+  const date =
     new Date(item.date);
 
-  const formatted =
-    currentDate.toISOString().slice(0, 16);
+  const year =
+    date.getFullYear();
 
-  const newDate =
-    prompt(
-      "Editar data e hora:\n\nFormato:\n2026-05-20T23:40",
-      formatted
-    );
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, "0");
 
-  if (!newDate) {
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, "0");
+
+  const hours =
+    String(
+      date.getHours()
+    ).padStart(2, "0");
+
+  const minutes =
+    String(
+      date.getMinutes()
+    ).padStart(2, "0");
+
+  editDate.value =
+    `${year}-${month}-${day}`;
+
+  editTime.value =
+    `${hours}:${minutes}`;
+
+  editModal.classList.remove("hidden");
+
+}
+
+
+// =========================
+// CANCELAR
+// =========================
+
+cancelEdit.addEventListener("click", () => {
+
+  editModal.classList.add("hidden");
+
+});
+
+
+// =========================
+// SALVAR EDIÇÃO
+// =========================
+
+saveEdit.addEventListener("click", () => {
+
+  if (currentEditIndex === null) {
     return;
   }
 
-  item.date =
+  const newDate =
+    `${editDate.value}T${editTime.value}`;
+
+  history[currentEditIndex].date =
     new Date(newDate);
 
   saveHistory();
 
   renderHistory();
 
-}
+  editModal.classList.add("hidden");
+
+});
 
 
 // =========================
