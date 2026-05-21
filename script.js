@@ -2,58 +2,81 @@ const todayTask = document.getElementById("today-task");
 
 const doneBtn = document.getElementById("done-btn");
 
+const configBtn = document.getElementById("config-btn");
 
-// =========================
-// CRONOGRAMA
-// =========================
+const configPanel = document.getElementById("config-panel");
 
-const schedule = {
+const dayButtons = document.querySelectorAll(".day-btn");
 
-  0: "🧬 Reconstrução", // Domingo
-  1: "💧 Hidratação",  // Segunda
-  4: "🥥 Nutrição"    // Quinta
+const saveConfigBtn = document.getElementById("save-config");
 
-};
+const sequenceInput = document.getElementById("sequence-input");
 
 
 // =========================
-// PEGAR DIA ATUAL
+// ABRIR CONFIG
 // =========================
 
-const today = new Date().getDay();
+configBtn.addEventListener("click", () => {
 
+  configPanel.classList.toggle("hidden");
 
-// =========================
-// DEFINIR TRATAMENTO
-// =========================
-
-const taskToday = schedule[today];
-
-if (taskToday) {
-
-  todayTask.innerText = taskToday;
-
-} else {
-
-  todayTask.innerText = "✨ Dia de descanso";
-
-}
+});
 
 
 // =========================
-// VERIFICAR SE JÁ CONCLUIU
+// SELECIONAR DIAS
 // =========================
 
-const todayKey = new Date().toDateString();
+let selectedDays = [];
 
-const savedDone = localStorage.getItem(todayKey);
+dayButtons.forEach((button) => {
+
+  button.addEventListener("click", () => {
+
+    const day = button.dataset.day;
+
+    if (selectedDays.includes(day)) {
+
+      selectedDays = selectedDays.filter(d => d !== day);
+
+      button.classList.remove("active");
+
+    } else {
+
+      selectedDays.push(day);
+
+      button.classList.add("active");
+
+    }
+
+  });
+
+});
 
 
-if (savedDone === "true") {
+// =========================
+// SALVAR CONFIGURAÇÃO
+// =========================
 
-  doneBtn.innerText = "✅ Concluído hoje";
+saveConfigBtn.addEventListener("click", () => {
 
-}
+  const sequence = sequenceInput.value;
+
+  localStorage.setItem("washDays", JSON.stringify(selectedDays));
+
+  localStorage.setItem("sequence", sequence);
+
+  alert("Cronograma salvo ✨");
+
+});
+
+
+// =========================
+// EXEMPLO TEMPORÁRIO
+// =========================
+
+todayTask.innerText = "✨ Configure seu cronograma";
 
 
 // =========================
@@ -63,8 +86,6 @@ if (savedDone === "true") {
 doneBtn.addEventListener("click", () => {
 
   doneBtn.innerText = "✅ Concluído hoje";
-
-  localStorage.setItem(todayKey, true);
 
 });
 
