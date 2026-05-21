@@ -6,8 +6,6 @@ const configBtn = document.getElementById("config-btn");
 
 const configPanel = document.getElementById("config-panel");
 
-const dayButtons = document.querySelectorAll(".day-btn");
-
 const saveConfigBtn = document.getElementById("save-config");
 
 const sequenceInput = document.getElementById("sequence-input");
@@ -25,67 +23,101 @@ configBtn.addEventListener("click", () => {
 
 
 // =========================
-// SELECIONAR DIAS
+// PEGAR DADOS SALVOS
 // =========================
 
-let selectedDays = [];
+let sequence = JSON.parse(localStorage.getItem("sequence"));
 
-dayButtons.forEach((button) => {
-
-  button.addEventListener("click", () => {
-
-    const day = button.dataset.day;
-
-    if (selectedDays.includes(day)) {
-
-      selectedDays = selectedDays.filter(d => d !== day);
-
-      button.classList.remove("active");
-
-    } else {
-
-      selectedDays.push(day);
-
-      button.classList.add("active");
-
-    }
-
-  });
-
-});
+let currentIndex = Number(localStorage.getItem("currentIndex"));
 
 
 // =========================
-// SALVAR CONFIGURAÇÃO
+// CONFIG PADRÃO
 // =========================
 
-saveConfigBtn.addEventListener("click", () => {
+if (!sequence) {
 
-  const sequence = sequenceInput.value;
+  sequence = ["H", "N", "H", "R"];
 
-  localStorage.setItem("washDays", JSON.stringify(selectedDays));
+  localStorage.setItem("sequence", JSON.stringify(sequence));
 
-  localStorage.setItem("sequence", sequence);
-
-  alert("Cronograma salvo ✨");
-
-});
+}
 
 
-// =========================
-// EXEMPLO TEMPORÁRIO
-// =========================
+if (isNaN(currentIndex)) {
 
-todayTask.innerText = "✨ Configure seu cronograma";
+  currentIndex = 0;
+
+  localStorage.setItem("currentIndex", currentIndex);
+
+}
 
 
 // =========================
-// BOTÃO CONCLUIR
+// MOSTRAR ETAPA ATUAL
+// =========================
+
+function updateTask() {
+
+  const currentStep = sequence[currentIndex];
+
+  if (currentStep === "H") {
+    todayTask.innerText = "💧 Hidratação";
+  }
+
+  if (currentStep === "N") {
+    todayTask.innerText = "🥥 Nutrição";
+  }
+
+  if (currentStep === "R") {
+    todayTask.innerText = "🧬 Reconstrução";
+  }
+
+}
+
+updateTask();
+
+
+// =========================
+// AVANÇAR SEQUÊNCIA
 // =========================
 
 doneBtn.addEventListener("click", () => {
 
-  doneBtn.innerText = "✅ Concluído hoje";
+  currentIndex++;
+
+  if (currentIndex >= sequence.length) {
+    currentIndex = 0;
+  }
+
+  localStorage.setItem("currentIndex", currentIndex);
+
+  updateTask();
+
+});
+
+
+// =========================
+// SALVAR NOVA SEQUÊNCIA
+// =========================
+
+saveConfigBtn.addEventListener("click", () => {
+
+  const text = sequenceInput.value;
+
+  sequence = text
+    .toUpperCase()
+    .split(" ");
+
+  currentIndex = 0;
+
+  localStorage.setItem("sequence", JSON.stringify(sequence));
+
+  localStorage.setItem("currentIndex", currentIndex);
+
+  updateTask();
+
+  alert("Sequência salva ✨");
 
 });
 
