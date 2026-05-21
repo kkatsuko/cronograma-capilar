@@ -13,10 +13,10 @@ const tonicHistory =
 
 
 // =========================
-// PEGAR HISTÓRICO
+// HISTÓRICO
 // =========================
 
-const history =
+let history =
   JSON.parse(
     localStorage.getItem("history")
   ) || [];
@@ -66,57 +66,200 @@ function getStepName(step) {
 
 
 // =========================
-// RENDERIZAR HISTÓRICO
+// SALVAR HISTÓRICO
 // =========================
 
-history.forEach((item) => {
+function saveHistory() {
 
-  // LAVAGEM
+  localStorage.setItem(
+    "history",
+    JSON.stringify(history)
+  );
 
-  if (item.type === "wash") {
+}
 
-    washHistory.innerHTML += `
 
-      <p>
-        🚿 ${formatDate(item.date)}
-      </p>
+// =========================
+// EXCLUIR ITEM
+// =========================
 
-    `;
+function deleteHistory(index) {
 
+  const confirmDelete =
+    confirm("Excluir registro?");
+
+  if (!confirmDelete) {
+    return;
   }
 
+  history.splice(index, 1);
 
-  // ETAPAS
+  saveHistory();
 
-  if (item.type === "step") {
+  renderHistory();
 
-    stepHistory.innerHTML += `
+}
 
-      <p>
-        ${getStepName(item.step)}
-        <br>
-        ${formatDate(item.date)}
-      </p>
 
-    `;
+// =========================
+// EDITAR ITEM
+// =========================
 
+function editHistory(index) {
+
+  const item =
+    history[index];
+
+  const currentDate =
+    new Date(item.date);
+
+  const formatted =
+    currentDate.toISOString().slice(0, 16);
+
+  const newDate =
+    prompt(
+      "Editar data e hora:\n\nFormato:\n2026-05-20T23:40",
+      formatted
+    );
+
+  if (!newDate) {
+    return;
   }
 
+  item.date =
+    new Date(newDate);
 
-  // TÔNICO
+  saveHistory();
 
-  if (item.type === "tonic") {
+  renderHistory();
 
-    tonicHistory.innerHTML += `
+}
 
-      <p>
-        🌱 Aplicado
-        <br>
-        ${formatDate(item.date)}
-      </p>
 
-    `;
+// =========================
+// RENDERIZAR
+// =========================
 
-  }
+function renderHistory() {
 
-});
+  washHistory.innerHTML = "";
+
+  stepHistory.innerHTML = "";
+
+  tonicHistory.innerHTML = "";
+
+
+  history.forEach((item, index) => {
+
+    // =====================
+    // LAVAGEM
+    // =====================
+
+    if (item.type === "wash") {
+
+      washHistory.innerHTML += `
+
+        <div class="history-item">
+
+          <p>
+            🚿 ${formatDate(item.date)}
+          </p>
+
+          <div class="history-buttons">
+
+            <button onclick="editHistory(${index})">
+              ✏ Editar
+            </button>
+
+            <button onclick="deleteHistory(${index})">
+              🗑 Excluir
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    // =====================
+    // ETAPAS
+    // =====================
+
+    if (item.type === "step") {
+
+      stepHistory.innerHTML += `
+
+        <div class="history-item">
+
+          <p>
+            ${getStepName(item.step)}
+            <br>
+            ${formatDate(item.date)}
+          </p>
+
+          <div class="history-buttons">
+
+            <button onclick="editHistory(${index})">
+              ✏ Editar
+            </button>
+
+            <button onclick="deleteHistory(${index})">
+              🗑 Excluir
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    // =====================
+    // TÔNICO
+    // =====================
+
+    if (item.type === "tonic") {
+
+      tonicHistory.innerHTML += `
+
+        <div class="history-item">
+
+          <p>
+            🌱 Aplicado
+            <br>
+            ${formatDate(item.date)}
+          </p>
+
+          <div class="history-buttons">
+
+            <button onclick="editHistory(${index})">
+              ✏ Editar
+            </button>
+
+            <button onclick="deleteHistory(${index})">
+              🗑 Excluir
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+  });
+
+}
+
+
+// =========================
+// INICIAR
+// =========================
+
+renderHistory();
