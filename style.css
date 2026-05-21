@@ -99,6 +99,8 @@ button {
   display: flex;
 
   gap: 10px;
+
+  flex-wrap: wrap;
 }
 
 #undo-btn {
@@ -110,6 +112,7 @@ button {
 
   color: white;
 }
+
 #config-header {
   display: flex;
 
@@ -129,7 +132,7 @@ button {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 #reset-btn {
@@ -145,6 +148,7 @@ button {
 
   margin-bottom: 20px;
 }
+
 small {
   display: block;
 
@@ -158,6 +162,11 @@ small {
 
   line-height: 1.5;
 }
+
+
+/* =========================
+   HISTÓRICO
+========================= */
 
 .history-item {
   background: #f8f8f8;
@@ -189,6 +198,11 @@ small {
   padding: 10px;
 }
 
+
+/* =========================
+   MODAL
+========================= */
+
 #edit-modal {
   position: fixed;
 
@@ -208,6 +222,8 @@ small {
   padding: 20px;
 
   box-sizing: border-box;
+
+  z-index: 999;
 }
 
 .modal-content {
