@@ -137,3 +137,11 @@ button {
 
   margin-top: 10px;
 }
+
+#reports-btn {
+  background: #7b5cff;
+
+  color: white;
+
+  margin-bottom: 20px;
+}
