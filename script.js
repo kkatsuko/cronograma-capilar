@@ -61,6 +61,35 @@ let currentIndex =
     localStorage.getItem("currentIndex")
   ) || 0;
 
+// =========================
+// HISTÓRICO
+// =========================
+
+function saveHistory(type, data = {}) {
+
+  const history =
+    JSON.parse(
+      localStorage.getItem("history")
+    ) || [];
+
+  const newItem = {
+
+    type,
+
+    date: new Date(),
+
+    ...data
+
+  };
+
+  history.unshift(newItem);
+
+  localStorage.setItem(
+    "history",
+    JSON.stringify(history)
+  );
+
+}
 
 // =========================
 // MOSTRAR ETAPA
@@ -168,7 +197,11 @@ saveSequenceBtn.addEventListener("click", () => {
 // =========================
 
 stepBtn.addEventListener("click", () => {
-
+  
+saveHistory("step", {
+  step: sequence[currentIndex]
+});
+  
   currentIndex++;
 
   if (currentIndex >= sequence.length) {
@@ -252,7 +285,8 @@ washBtn.addEventListener("click", () => {
     "lastWashDate",
     new Date()
   );
-
+  saveHistory("wash");
+  
   updateLastWashText();
 
 });
@@ -316,7 +350,8 @@ tonicBtn.addEventListener("click", () => {
     "lastTonicDate",
     new Date()
   );
-
+  saveHistory("tonic");
+  
   updateTonicStatus();
 
 });
