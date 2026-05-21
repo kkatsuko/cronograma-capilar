@@ -11,6 +11,15 @@ const lastWash =
 const tonicStatus =
   document.getElementById("tonic-status");
 
+const lastTonic =
+  document.getElementById("last-tonic");
+
+const lastStep =
+  document.getElementById("last-step");
+
+const washHistoryPreview =
+  document.getElementById("wash-history-preview");
+
 const washBtn =
   document.getElementById("wash-btn");
 
@@ -64,6 +73,7 @@ let currentIndex =
     localStorage.getItem("currentIndex")
   ) || 0;
 
+
 // =========================
 // HISTÓRICO
 // =========================
@@ -94,8 +104,33 @@ function saveHistory(type, data = {}) {
 
 }
 
+
 // =========================
-// MOSTRAR ETAPA
+// FORMATAR DATA
+// =========================
+
+function formatDate(dateString) {
+
+  const date =
+    new Date(dateString);
+
+  return date.toLocaleString("pt-BR", {
+
+    day: "2-digit",
+
+    month: "2-digit",
+
+    hour: "2-digit",
+
+    minute: "2-digit"
+
+  });
+
+}
+
+
+// =========================
+// ETAPAS
 // =========================
 
 function getStepName(step) {
@@ -125,6 +160,45 @@ function updateStep() {
 }
 
 updateStep();
+
+
+// =========================
+// ÚLTIMA ETAPA
+// =========================
+
+function updateLastStep() {
+
+  const history =
+    JSON.parse(
+      localStorage.getItem("history")
+    ) || [];
+
+  const lastStepItem =
+    history.find(
+      item => item.type === "step"
+    );
+
+  if (!lastStepItem) {
+
+    lastStep.innerText =
+      "Nenhuma etapa ainda";
+
+    return;
+
+  }
+
+  lastStep.innerHTML = `
+
+    Última etapa:
+    ${getStepName(lastStepItem.step)}
+    <br>
+    ${formatDate(lastStepItem.date)}
+
+  `;
+
+}
+
+updateLastStep();
 
 
 // =========================
@@ -200,11 +274,13 @@ saveSequenceBtn.addEventListener("click", () => {
 // =========================
 
 stepBtn.addEventListener("click", () => {
-  
-saveHistory("step", {
-  step: sequence[currentIndex]
-});
-  
+
+  saveHistory("step", {
+    step: sequence[currentIndex]
+  });
+
+  updateLastStep();
+
   currentIndex++;
 
   if (currentIndex >= sequence.length) {
@@ -279,6 +355,48 @@ updateLastWashText();
 
 
 // =========================
+// PRÉVIA DAS LAVAGENS
+// =========================
+
+function updateWashHistoryPreview() {
+
+  const history =
+    JSON.parse(
+      localStorage.getItem("history")
+    ) || [];
+
+  const washes =
+    history.filter(
+      item => item.type === "wash"
+    );
+
+  if (washes.length === 0) {
+
+    washHistoryPreview.innerText =
+      "Nenhuma lavagem ainda";
+
+    return;
+
+  }
+
+  const recent =
+    washes.slice(0, 2);
+
+  washHistoryPreview.innerHTML =
+    recent.map(item => {
+
+      return `
+        🚿 ${formatDate(item.date)}
+      `;
+
+    }).join("<br>");
+
+}
+
+updateWashHistoryPreview();
+
+
+// =========================
 // LAVEI HOJE
 // =========================
 
@@ -288,9 +406,12 @@ washBtn.addEventListener("click", () => {
     "lastWashDate",
     new Date()
   );
+
   saveHistory("wash");
-  
+
   updateLastWashText();
+
+  updateWashHistoryPreview();
 
 });
 
@@ -301,10 +422,10 @@ washBtn.addEventListener("click", () => {
 
 function updateTonicStatus() {
 
-  const lastTonic =
+  const lastTonicDate =
     localStorage.getItem("lastTonicDate");
 
-  if (!lastTonic) {
+  if (!lastTonicDate) {
 
     tonicStatus.innerText = "SIM";
 
@@ -315,7 +436,7 @@ function updateTonicStatus() {
   const today = new Date();
 
   const tonicDate =
-    new Date(lastTonic);
+    new Date(lastTonicDate);
 
   const diffTime =
     today - tonicDate;
@@ -344,6 +465,44 @@ updateTonicStatus();
 
 
 // =========================
+// ÚLTIMO TÔNICO
+// =========================
+
+function updateLastTonic() {
+
+  const history =
+    JSON.parse(
+      localStorage.getItem("history")
+    ) || [];
+
+  const lastTonicItem =
+    history.find(
+      item => item.type === "tonic"
+    );
+
+  if (!lastTonicItem) {
+
+    lastTonic.innerText =
+      "Nenhuma aplicação ainda";
+
+    return;
+
+  }
+
+  lastTonic.innerHTML = `
+
+    Última aplicação:
+    <br>
+    ${formatDate(lastTonicItem.date)}
+
+  `;
+
+}
+
+updateLastTonic();
+
+
+// =========================
 // TÔNICO OK
 // =========================
 
@@ -353,9 +512,12 @@ tonicBtn.addEventListener("click", () => {
     "lastTonicDate",
     new Date()
   );
+
   saveHistory("tonic");
-  
+
   updateTonicStatus();
+
+  updateLastTonic();
 
 });
 
@@ -397,6 +559,7 @@ resetBtn.addEventListener("click", () => {
 
 });
 
+
 // =========================
 // IR PARA RELATÓRIOS
 // =========================
@@ -407,6 +570,7 @@ reportsBtn.addEventListener("click", () => {
     "relatorios.html";
 
 });
+
 
 // =========================
 // SERVICE WORKER
