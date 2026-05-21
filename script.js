@@ -44,6 +44,9 @@ const toggleConfig =
 const resetBtn =
   document.getElementById("reset-btn");
 
+const reportsBtn =
+  document.getElementById("reports-btn");
+
 
 // =========================
 // DADOS
