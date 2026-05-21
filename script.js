@@ -1,123 +1,255 @@
-const todayTask = document.getElementById("today-task");
+// =========================
+// ELEMENTOS
+// =========================
 
-const doneBtn = document.getElementById("done-btn");
+const nextStep = document.getElementById("next-step");
 
-const configBtn = document.getElementById("config-btn");
+const lastWash = document.getElementById("last-wash");
 
-const configPanel = document.getElementById("config-panel");
+const tonicStatus = document.getElementById("tonic-status");
 
-const saveConfigBtn = document.getElementById("save-config");
+const washBtn = document.getElementById("wash-btn");
 
-const sequenceInput = document.getElementById("sequence-input");
+const stepBtn = document.getElementById("step-btn");
+
+const tonicBtn = document.getElementById("tonic-btn");
+
+const seqButtons = document.querySelectorAll(".seq-btn");
+
+const sequencePreview = document.getElementById("sequence-preview");
+
+const undoBtn = document.getElementById("undo-btn");
+
+const saveSequenceBtn = document.getElementById("save-sequence-btn");
 
 
 // =========================
-// ABRIR CONFIG
+// DADOS
 // =========================
 
-configBtn.addEventListener("click", () => {
+let tempSequence = [];
 
-  configPanel.classList.toggle("hidden");
+let sequence = JSON.parse(localStorage.getItem("sequence")) || ["H", "N", "H", "R"];
+
+let currentIndex = Number(localStorage.getItem("currentIndex")) || 0;
+
+
+// =========================
+// MOSTRAR ETAPA
+// =========================
+
+function getStepName(step) {
+
+  if (step === "H") return "💧 Hidratação";
+
+  if (step === "N") return "🥥 Nutrição";
+
+  if (step === "R") return "🧬 Reconstrução";
+
+}
+
+function updateStep() {
+
+  nextStep.innerText = getStepName(sequence[currentIndex]);
+
+}
+
+updateStep();
+
+
+// =========================
+// MONTAR SEQUÊNCIA
+// =========================
+
+seqButtons.forEach((button) => {
+
+  button.addEventListener("click", () => {
+
+    const step = button.dataset.step;
+
+    tempSequence.push(step);
+
+    sequencePreview.innerText =
+      "Sua sequência: " + tempSequence.join(" ");
+
+  });
 
 });
 
 
 // =========================
-// PEGAR DADOS SALVOS
+// APAGAR ÚLTIMO
 // =========================
 
-let sequence = JSON.parse(localStorage.getItem("sequence"));
+undoBtn.addEventListener("click", () => {
 
-let currentIndex = Number(localStorage.getItem("currentIndex"));
+  tempSequence.pop();
+
+  sequencePreview.innerText =
+    "Sua sequência: " + tempSequence.join(" ");
+
+});
 
 
 // =========================
-// CONFIG PADRÃO
+// SALVAR SEQUÊNCIA
 // =========================
 
-if (!sequence) {
+saveSequenceBtn.addEventListener("click", () => {
 
-  sequence = ["H", "N", "H", "R"];
+  if (tempSequence.length === 0) return;
 
-  localStorage.setItem("sequence", JSON.stringify(sequence));
-
-}
-
-
-if (isNaN(currentIndex)) {
+  sequence = tempSequence;
 
   currentIndex = 0;
 
+  localStorage.setItem("sequence", JSON.stringify(sequence));
+
   localStorage.setItem("currentIndex", currentIndex);
 
-}
+  updateStep();
+
+  alert("Sequência salva ✨");
+
+});
 
 
 // =========================
-// MOSTRAR ETAPA ATUAL
+// ETAPA FEITA
 // =========================
 
-function updateTask() {
-
-  const currentStep = sequence[currentIndex];
-
-  if (currentStep === "H") {
-    todayTask.innerText = "💧 Hidratação";
-  }
-
-  if (currentStep === "N") {
-    todayTask.innerText = "🥥 Nutrição";
-  }
-
-  if (currentStep === "R") {
-    todayTask.innerText = "🧬 Reconstrução";
-  }
-
-}
-
-updateTask();
-
-
-// =========================
-// AVANÇAR SEQUÊNCIA
-// =========================
-
-doneBtn.addEventListener("click", () => {
+stepBtn.addEventListener("click", () => {
 
   currentIndex++;
 
   if (currentIndex >= sequence.length) {
+
     currentIndex = 0;
+
   }
 
   localStorage.setItem("currentIndex", currentIndex);
 
-  updateTask();
+  updateStep();
 
 });
 
 
 // =========================
-// SALVAR NOVA SEQUÊNCIA
+// ÚLTIMA LAVAGEM
 // =========================
 
-saveConfigBtn.addEventListener("click", () => {
+function updateLastWashText() {
 
-  const text = sequenceInput.value;
+  const lastWashDate =
+    localStorage.getItem("lastWashDate");
 
-  sequence = text
-    .toUpperCase()
-    .split(" ");
+  if (!lastWashDate) {
 
-  currentIndex = 0;
+    lastWash.innerText = "Nunca";
 
-  localStorage.setItem("sequence", JSON.stringify(sequence));
+    return;
 
-  localStorage.setItem("currentIndex", currentIndex);
+  }
 
-  updateTask();
+  const today = new Date();
 
-  alert("Sequência salva ✨");
+  const washDate = new Date(lastWashDate);
+
+  const diffTime =
+    today - washDate;
+
+  const diffDays =
+    Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    lastWash.innerText = "Hoje";
+  }
+
+  else if (diffDays === 1) {
+    lastWash.innerText = "Ontem";
+  }
+
+  else {
+    lastWash.innerText =
+      `Há ${diffDays} dias`;
+  }
+
+}
+
+updateLastWashText();
+
+
+// =========================
+// LAVEI HOJE
+// =========================
+
+washBtn.addEventListener("click", () => {
+
+  localStorage.setItem(
+    "lastWashDate",
+    new Date()
+  );
+
+  updateLastWashText();
+
+});
+
+
+// =========================
+// TÔNICO
+// =========================
+
+function updateTonicStatus() {
+
+  const lastTonic =
+    localStorage.getItem("lastTonicDate");
+
+  if (!lastTonic) {
+
+    tonicStatus.innerText = "SIM";
+
+    return;
+
+  }
+
+  const today = new Date();
+
+  const tonicDate = new Date(lastTonic);
+
+  const diffTime =
+    today - tonicDate;
+
+  const diffDays =
+    Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays >= 2) {
+
+    tonicStatus.innerText = "SIM";
+
+  } else {
+
+    tonicStatus.innerText = "NÃO";
+
+  }
+
+}
+
+updateTonicStatus();
+
+
+// =========================
+// TÔNICO OK
+// =========================
+
+tonicBtn.addEventListener("click", () => {
+
+  localStorage.setItem(
+    "lastTonicDate",
+    new Date()
+  );
+
+  updateTonicStatus();
 
 });
 
