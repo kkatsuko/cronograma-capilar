@@ -56,47 +56,45 @@
         Selecionar
       </button>
 
-    </div>
+      <div id="tonic-config" class="care-config hidden">
 
-    <div id="tonic-config" class="card hidden">
+        <label>
+          Frequência de uso
 
-      <h2>🌱 Configurar tônico</h2>
+          <select id="tonic-frequency">
+            <option value="1">Todo dia</option>
+            <option value="2">Dia sim, dia não</option>
+            <option value="3">A cada 3 dias</option>
+            <option value="7">1 vez por semana</option>
+          </select>
 
-      <label>
-        Frequência de uso
+        </label>
 
-        <select id="tonic-frequency">
-          <option value="1">Todo dia</option>
-          <option value="2">Dia sim, dia não</option>
-          <option value="3">A cada 3 dias</option>
-          <option value="7">1 vez por semana</option>
-        </select>
+        <label>
+          Usar por quantos meses?
 
-      </label>
+          <input
+            type="number"
+            id="tonic-use-months"
+            value="3"
+            min="1"
+          >
 
-      <label>
-        Usar por quantos meses?
+        </label>
 
-        <input
-          type="number"
-          id="tonic-use-months"
-          value="3"
-          min="1"
-        >
+        <label>
+          Pausar por quantos meses?
 
-      </label>
+          <input
+            type="number"
+            id="tonic-pause-months"
+            value="3"
+            min="0"
+          >
 
-      <label>
-        Pausar por quantos meses?
+        </label>
 
-        <input
-          type="number"
-          id="tonic-pause-months"
-          value="3"
-          min="0"
-        >
-
-      </label>
+      </div>
 
     </div>
 
@@ -115,42 +113,42 @@
         Selecionar
       </button>
 
-    </div>
+      <div id="schedule-config" class="care-config hidden">
 
-    <div id="schedule-config" class="card hidden">
+        <h3>Sequência do cronograma</h3>
 
-      <h2>✨ Sequência do cronograma</h2>
+        <p>
+          Clique nas etapas para montar sua sequência.
+        </p>
 
-      <p>
-        Clique nas etapas para montar sua sequência.
-      </p>
+        <div class="sequence-buttons">
 
-      <div class="sequence-buttons">
+          <button class="config-seq-btn" data-step="H">
+            <span>💧</span>
+            <small>Hidratação</small>
+          </button>
 
-        <button class="config-seq-btn" data-step="H">
-          <span>💧</span>
-          <small>Hidratação</small>
-        </button>
+          <button class="config-seq-btn" data-step="N">
+            <span>🥥</span>
+            <small>Nutrição</small>
+          </button>
 
-        <button class="config-seq-btn" data-step="N">
-          <span>🥥</span>
-          <small>Nutrição</small>
-        </button>
+          <button class="config-seq-btn" data-step="R">
+            <span>🧬</span>
+            <small>Reconstrução</small>
+          </button>
 
-        <button class="config-seq-btn" data-step="R">
-          <span>🧬</span>
-          <small>Reconstrução</small>
+        </div>
+
+        <div id="config-sequence-preview">
+          Sua sequência:
+        </div>
+
+        <button id="clear-config-sequence">
+          ↩ Apagar último
         </button>
 
       </div>
-
-      <div id="config-sequence-preview">
-        Sua sequência:
-      </div>
-
-      <button id="clear-config-sequence">
-        ↩ Apagar último
-      </button>
 
     </div>
 
@@ -169,46 +167,44 @@
         Selecionar
       </button>
 
-    </div>
+      <div id="oiling-config" class="care-config hidden">
 
-    <div id="oiling-config" class="card hidden">
+        <label>
+          Frequência de uso
 
-      <h2>🛢️ Configurar oiling</h2>
+          <select id="oiling-frequency">
+            <option value="7">1 vez por semana</option>
+            <option value="15">A cada 15 dias</option>
+            <option value="30">1 vez por mês</option>
+          </select>
 
-      <label>
-        Frequência de uso
+        </label>
 
-        <select id="oiling-frequency">
-          <option value="7">1 vez por semana</option>
-          <option value="15">A cada 15 dias</option>
-          <option value="30">1 vez por mês</option>
-        </select>
+        <label>
+          Fazer por quantos meses?
 
-      </label>
+          <input
+            type="number"
+            id="oiling-use-months"
+            value="3"
+            min="1"
+          >
 
-      <label>
-        Fazer por quantos meses?
+        </label>
 
-        <input
-          type="number"
-          id="oiling-use-months"
-          value="3"
-          min="1"
-        >
+        <label>
+          Pausar por quantos meses?
 
-      </label>
+          <input
+            type="number"
+            id="oiling-pause-months"
+            value="0"
+            min="0"
+          >
 
-      <label>
-        Pausar por quantos meses?
+        </label>
 
-        <input
-          type="number"
-          id="oiling-pause-months"
-          value="0"
-          min="0"
-        >
-
-      </label>
+      </div>
 
     </div>
 
