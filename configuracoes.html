@@ -1,1 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Configurações</title>
+
+  <link rel="manifest" href="manifest.json">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>⚙ Configurar rotina</h1>
+
+    <p class="intro-text">
+      Escolha quais cuidados fazem parte da sua rotina capilar.
+    </p>
+
+
+    <div class="card option-card" data-care="tonic">
+
+      <h2>🌱 Tônico</h2>
+
+      <p>
+        Para quem usa tônico em dias alternados ou por ciclos.
+      </p>
+
+      <button class="care-toggle">
+        Selecionar
+      </button>
+
+    </div>
+
+
+    <div class="card option-card" data-care="schedule">
+
+      <h2>✨ Cronograma capilar</h2>
+
+      <p>
+        Hidratação, nutrição e reconstrução em sequência.
+      </p>
+
+      <button class="care-toggle">
+        Selecionar
+      </button>
+
+    </div>
+
+
+    <div class="card option-card" data-care="oiling">
+
+      <h2>🛢️ Oiling</h2>
+
+      <p>
+        Umectação ou uso de óleos antes da lavagem.
+      </p>
+
+      <button class="care-toggle">
+        Selecionar
+      </button>
+
+    </div>
+
+
+    <div class="card option-card" data-care="dayAfter">
+
+      <h2>🌀 Day after</h2>
+
+      <p>
+        Cuidados para revitalizar o cabelo nos dias sem lavagem.
+      </p>
+
+      <button class="care-toggle">
+        Selecionar
+      </button>
+
+    </div>
+
+
+    <div id="schedule-config" class="card hidden">
+
+      <h2>✨ Sequência do cronograma</h2>
+
+      <p>
+        Clique nas etapas para montar sua sequência.
+      </p>
+
+      <div class="sequence-buttons">
+
+        <button class="config-seq-btn" data-step="H">
+          💧 H
+        </button>
+
+        <button class="config-seq-btn" data-step="N">
+          🥥 N
+        </button>
+
+        <button class="config-seq-btn" data-step="R">
+          🧬 R
+        </button>
+
+      </div>
+
+      <div id="config-sequence-preview">
+        Sua sequência:
+      </div>
+
+      <button id="clear-config-sequence">
+        ↩ Apagar último
+      </button>
+
+    </div>
+
+
+    <button id="save-settings-btn">
+      💾 Salvar e ir para o app
+    </button>
+
+  </div>
+
+  <script src="config.js"></script>
+
+</body>
+
+</html>
