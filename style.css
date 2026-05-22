@@ -440,3 +440,17 @@ small {
 
   font-size: 18px;
 }
+
+.care-config {
+  margin-top: 18px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #eee;
+}
+
+.care-config h3 {
+  margin-top: 0;
+
+  font-size: 16px;
+}
