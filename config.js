@@ -102,10 +102,6 @@ if (savedSettings) {
 
   }
 
-  updateSelectedCards();
-
-  updateSequencePreview();
-
 }
 
 
@@ -115,7 +111,17 @@ if (savedSettings) {
 
 optionCards.forEach((card) => {
 
-  card.addEventListener("click", () => {
+  card.addEventListener("click", (event) => {
+
+    if (
+      event.target.tagName === "SELECT" ||
+      event.target.tagName === "INPUT" ||
+      event.target.classList.contains("config-seq-btn") ||
+      event.target.closest(".config-seq-btn") ||
+      event.target.id === "clear-config-sequence"
+    ) {
+      return;
+    }
 
     const care =
       card.dataset.care;
@@ -232,7 +238,7 @@ clearConfigSequence.addEventListener("click", () => {
 
 
 // =========================
-// NOME DAS ETAPAS
+// ÍCONE DAS ETAPAS
 // =========================
 
 function getStepIcon(step) {
@@ -348,3 +354,12 @@ saveSettingsBtn.addEventListener("click", () => {
     "index.html";
 
 });
+
+
+// =========================
+// INICIAR TELA
+// =========================
+
+updateSelectedCards();
+
+updateSequencePreview();
