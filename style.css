@@ -363,3 +363,80 @@ small {
 
   margin-top: 10px;
 }
+
+.option-card select,
+.option-card input,
+.card select,
+.card input {
+  width: 100%;
+
+  margin-top: 8px;
+  margin-bottom: 16px;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  border: 1px solid #ddd;
+
+  box-sizing: border-box;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 15px;
+}
+
+.card label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  font-size: 14px;
+
+  color: #555;
+}
+
+.config-seq-btn {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 4px;
+
+  min-height: 76px;
+}
+
+.config-seq-btn span {
+  font-size: 24px;
+}
+
+.config-seq-btn small {
+  margin: 0;
+
+  font-size: 11px;
+
+  color: #555;
+}
+
+.sequence-pill {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  background: #ece7ff;
+
+  border-radius: 50%;
+
+  margin-left: 6px;
+
+  font-size: 18px;
+}
