@@ -5,8 +5,14 @@
 const optionCards =
   document.querySelectorAll(".option-card");
 
+const tonicConfig =
+  document.getElementById("tonic-config");
+
 const scheduleConfig =
   document.getElementById("schedule-config");
+
+const oilingConfig =
+  document.getElementById("oiling-config");
 
 const configSeqButtons =
   document.querySelectorAll(".config-seq-btn");
@@ -19,6 +25,24 @@ const clearConfigSequence =
 
 const saveSettingsBtn =
   document.getElementById("save-settings-btn");
+
+const tonicFrequency =
+  document.getElementById("tonic-frequency");
+
+const tonicUseMonths =
+  document.getElementById("tonic-use-months");
+
+const tonicPauseMonths =
+  document.getElementById("tonic-pause-months");
+
+const oilingFrequency =
+  document.getElementById("oiling-frequency");
+
+const oilingUseMonths =
+  document.getElementById("oiling-use-months");
+
+const oilingPauseMonths =
+  document.getElementById("oiling-pause-months");
 
 
 // =========================
@@ -51,6 +75,32 @@ if (savedSettings) {
 
   selectedSequence =
     savedSettings.sequence || [];
+
+  if (savedSettings.tonic) {
+
+    tonicFrequency.value =
+      savedSettings.tonic.frequencyDays || 2;
+
+    tonicUseMonths.value =
+      savedSettings.tonic.useMonths || 3;
+
+    tonicPauseMonths.value =
+      savedSettings.tonic.pauseMonths || 3;
+
+  }
+
+  if (savedSettings.oiling) {
+
+    oilingFrequency.value =
+      savedSettings.oiling.frequencyDays || 7;
+
+    oilingUseMonths.value =
+      savedSettings.oiling.useMonths || 3;
+
+    oilingPauseMonths.value =
+      savedSettings.oiling.pauseMonths || 0;
+
+  }
 
   updateSelectedCards();
 
@@ -113,6 +163,17 @@ function updateSelectedCards() {
   });
 
 
+  if (selectedCare.tonic) {
+
+    tonicConfig.classList.remove("hidden");
+
+  } else {
+
+    tonicConfig.classList.add("hidden");
+
+  }
+
+
   if (selectedCare.schedule) {
 
     scheduleConfig.classList.remove("hidden");
@@ -120,6 +181,17 @@ function updateSelectedCards() {
   } else {
 
     scheduleConfig.classList.add("hidden");
+
+  }
+
+
+  if (selectedCare.oiling) {
+
+    oilingConfig.classList.remove("hidden");
+
+  } else {
+
+    oilingConfig.classList.add("hidden");
 
   }
 
@@ -160,6 +232,27 @@ clearConfigSequence.addEventListener("click", () => {
 
 
 // =========================
+// NOME DAS ETAPAS
+// =========================
+
+function getStepIcon(step) {
+
+  if (step === "H") {
+    return "💧";
+  }
+
+  if (step === "N") {
+    return "🥥";
+  }
+
+  if (step === "R") {
+    return "🧬";
+  }
+
+}
+
+
+// =========================
 // MOSTRAR SEQUÊNCIA
 // =========================
 
@@ -174,9 +267,19 @@ function updateSequencePreview() {
 
   }
 
-  configSequencePreview.innerText =
+  configSequencePreview.innerHTML =
     "Sua sequência: " +
-    selectedSequence.join(" ");
+    selectedSequence
+      .map(step => {
+
+        return `
+          <span class="sequence-pill">
+            ${getStepIcon(step)}
+          </span>
+        `;
+
+      })
+      .join("");
 
 }
 
@@ -201,14 +304,30 @@ saveSettingsBtn.addEventListener("click", () => {
   }
 
   const settings = {
+
     care: selectedCare,
-    sequence: selectedSequence
+
+    sequence: selectedSequence,
+
+    tonic: {
+      frequencyDays: Number(tonicFrequency.value),
+      useMonths: Number(tonicUseMonths.value),
+      pauseMonths: Number(tonicPauseMonths.value)
+    },
+
+    oiling: {
+      frequencyDays: Number(oilingFrequency.value),
+      useMonths: Number(oilingUseMonths.value),
+      pauseMonths: Number(oilingPauseMonths.value)
+    }
+
   };
 
   localStorage.setItem(
     "hairSettings",
     JSON.stringify(settings)
   );
+
 
   if (selectedCare.schedule) {
 
@@ -223,6 +342,7 @@ saveSettingsBtn.addEventListener("click", () => {
     );
 
   }
+
 
   window.location.href =
     "index.html";
