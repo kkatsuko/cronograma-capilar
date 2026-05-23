@@ -454,3 +454,11 @@ small {
 
   font-size: 16px;
 }
+
+#settings-btn {
+  background: #ece7ff;
+
+  color: #4b35a8;
+
+  margin-bottom: 20px;
+}
