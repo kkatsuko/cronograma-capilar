@@ -58,26 +58,72 @@
     </div>
 
 
-    <!-- PRÓXIMA ETAPA -->
+<!-- PRÓXIMA ETAPA -->
 
-    <div class="card" id="schedule-card">
+<div class="card" id="schedule-card">
 
-      <h2>✨ Próxima etapa</h2>
+  <h2>✨ Próxima etapa</h2>
 
-      <p id="next-step">
-        💧 Hidratação
-      </p>
-      <small id="last-step">
-       Nenhuma etapa ainda
-      </small>
+  <p id="next-step">
+    💧 Hidratação
+  </p>
 
-      <button id="step-btn">
-        ✔ Etapa feita
+  <small id="last-step">
+    Nenhuma etapa ainda
+  </small>
+
+  <button id="step-btn">
+    ✔ Etapa feita
+  </button>
+
+  <button id="toggle-schedule-config">
+    ⚙ Configurar ordem do cronograma
+  </button>
+
+  <div id="schedule-config-panel" class="hidden">
+
+    <p class="config-help">
+      Clique nas etapas para montar a nova sequência.
+    </p>
+
+    <div class="sequence-buttons">
+
+      <button class="seq-btn" data-step="H">
+        <span>💧</span>
+        <small>Hidratação</small>
+      </button>
+
+      <button class="seq-btn" data-step="N">
+        <span>🥥</span>
+        <small>Nutrição</small>
+      </button>
+
+      <button class="seq-btn" data-step="R">
+        <span>🧬</span>
+        <small>Reconstrução</small>
       </button>
 
     </div>
 
+    <div id="sequence-preview">
+      Nova sequência:
+    </div>
 
+    <div class="config-actions">
+
+      <button id="undo-btn">
+        ↩ Apagar último
+      </button>
+
+      <button id="save-sequence-btn">
+        ✔ Salvar sequência
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
     <!-- LAVAGEM -->
 
     <div class="card">
