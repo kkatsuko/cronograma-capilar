@@ -8,22 +8,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Relatórios</title>
-  
-<link
-  rel="preconnect"
-  href="https://fonts.googleapis.com"
->
 
-<link
-  rel="preconnect"
-  href="https://fonts.gstatic.com"
-  crossorigin
->
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
 
-<link
-  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
-  rel="stylesheet"
->
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="style.css">
 
 </head>
@@ -33,6 +34,7 @@
   <div class="container">
 
     <h1>📊 Relatórios</h1>
+
 
     <div class="card">
 
@@ -67,65 +69,63 @@
     </div>
 
 
-    <button onclick="window.location.href='index.html'">
-
+    <button
+      type="button"
+      onclick="window.location.href='index.html'"
+    >
       ← Voltar
-
     </button>
 
   </div>
-<!-- MODAL -->
-
-<div id="edit-modal" class="hidden">
-
-  <div class="modal-content">
-
-    <h2>✏ Editar registro</h2>
-
-    <label>
-
-      Data
-
-      <input
-        type="date"
-        id="edit-date"
-      >
-
-    </label>
 
 
-    <label>
+  <!-- MODAL -->
 
-      Hora
+  <div id="edit-modal" class="hidden">
 
-      <input
-        type="time"
-        id="edit-time"
-      >
+    <div class="modal-content">
 
-    </label>
+      <h2>✏ Editar registro</h2>
+
+      <label>
+        Data
+
+        <input
+          type="date"
+          id="edit-date"
+        >
+
+      </label>
 
 
-    <div class="modal-buttons">
+      <label>
+        Hora
 
-      <button id="cancel-edit">
+        <input
+          type="time"
+          id="edit-time"
+        >
 
-        Cancelar
+      </label>
 
-      </button>
 
-      <button id="save-edit">
+      <div class="modal-buttons">
 
-        Salvar
+        <button id="cancel-edit" type="button">
+          Cancelar
+        </button>
 
-      </button>
+        <button id="save-edit" type="button">
+          Salvar
+        </button>
+
+      </div>
 
     </div>
 
   </div>
 
-</div>
-  
+
   <script src="reports.js"></script>
 
 </body>
