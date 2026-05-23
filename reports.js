@@ -62,6 +62,8 @@ function getStepName(step) {
     return "🧬 Reconstrução";
   }
 
+  return "✨ Etapa";
+
 }
 
 
@@ -216,6 +218,38 @@ function renderHistory() {
   tonicHistory.innerHTML = "";
 
 
+  const washes =
+    history.filter(
+      item => item.type === "wash"
+    );
+
+  const steps =
+    history.filter(
+      item => item.type === "step"
+    );
+
+  const tonics =
+    history.filter(
+      item => item.type === "tonic"
+    );
+
+
+  if (washes.length === 0) {
+    washHistory.innerHTML =
+      "Nenhum registro ainda";
+  }
+
+  if (steps.length === 0) {
+    stepHistory.innerHTML =
+      "Nenhum registro ainda";
+  }
+
+  if (tonics.length === 0) {
+    tonicHistory.innerHTML =
+      "Nenhum registro ainda";
+  }
+
+
   history.forEach((item, index) => {
 
     // =====================
@@ -234,11 +268,11 @@ function renderHistory() {
 
           <div class="history-buttons">
 
-            <button onclick="editHistory(${index})">
+            <button type="button" onclick="editHistory(${index})">
               ✏ Editar
             </button>
 
-            <button onclick="deleteHistory(${index})">
+            <button type="button" onclick="deleteHistory(${index})">
               🗑 Excluir
             </button>
 
@@ -269,11 +303,11 @@ function renderHistory() {
 
           <div class="history-buttons">
 
-            <button onclick="editHistory(${index})">
+            <button type="button" onclick="editHistory(${index})">
               ✏ Editar
             </button>
 
-            <button onclick="deleteHistory(${index})">
+            <button type="button" onclick="deleteHistory(${index})">
               🗑 Excluir
             </button>
 
@@ -304,11 +338,11 @@ function renderHistory() {
 
           <div class="history-buttons">
 
-            <button onclick="editHistory(${index})">
+            <button type="button" onclick="editHistory(${index})">
               ✏ Editar
             </button>
 
-            <button onclick="deleteHistory(${index})">
+            <button type="button" onclick="deleteHistory(${index})">
               🗑 Excluir
             </button>
 
