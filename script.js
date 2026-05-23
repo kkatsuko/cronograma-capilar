@@ -59,6 +59,30 @@ const reportsBtn =
 const settingsBtn =
   document.getElementById("settings-btn");
 
+const tonicCard =
+  document.getElementById("tonic-card");
+
+const scheduleCard =
+  document.getElementById("schedule-card");
+
+const toggleScheduleConfig =
+  document.getElementById("toggle-schedule-config");
+
+const scheduleConfigPanel =
+  document.getElementById("schedule-config-panel");
+
+const seqButtons =
+  document.querySelectorAll(".seq-btn");
+
+const sequencePreview =
+  document.getElementById("sequence-preview");
+
+const undoBtn =
+  document.getElementById("undo-btn");
+
+const saveSequenceBtn =
+  document.getElementById("save-sequence-btn");
+
 // =========================
 // DADOS
 // =========================
@@ -84,6 +108,21 @@ if (!hairSettings) {
 
   window.location.href =
     "configuracoes.html";
+
+}
+if (hairSettings) {
+
+  if (!hairSettings.care.tonic) {
+
+    tonicCard.classList.add("hidden");
+
+  }
+
+  if (!hairSettings.care.schedule) {
+
+    scheduleCard.classList.add("hidden");
+
+  }
 
 }
 
@@ -572,6 +611,141 @@ resetBtn.addEventListener("click", () => {
 
 });
 
+// =========================
+// CONFIGURAR SEQUÊNCIA DO CRONOGRAMA
+// =========================
+
+let tempSequence = [];
+
+toggleScheduleConfig.addEventListener("click", () => {
+
+  scheduleConfigPanel.classList.toggle("hidden");
+
+});
+
+
+seqButtons.forEach((button) => {
+
+  button.addEventListener("click", () => {
+
+    const step =
+      button.dataset.step;
+
+    tempSequence.push(step);
+
+    updateSequencePreview();
+
+  });
+
+});
+
+
+undoBtn.addEventListener("click", () => {
+
+  tempSequence.pop();
+
+  updateSequencePreview();
+
+});
+
+
+function getStepIcon(step) {
+
+  if (step === "H") {
+    return "💧";
+  }
+
+  if (step === "N") {
+    return "🥥";
+  }
+
+  if (step === "R") {
+    return "🧬";
+  }
+
+}
+
+
+function updateSequencePreview() {
+
+  if (tempSequence.length === 0) {
+
+    sequencePreview.innerText =
+      "Nova sequência:";
+
+    return;
+
+  }
+
+  sequencePreview.innerHTML =
+    "Nova sequência: " +
+    tempSequence
+      .map(step => {
+
+        return `
+          <span class="sequence-pill">
+            ${getStepIcon(step)}
+          </span>
+        `;
+
+      })
+      .join("");
+
+}
+
+
+saveSequenceBtn.addEventListener("click", () => {
+
+  if (tempSequence.length === 0) {
+
+    alert("Monte uma sequência antes de salvar.");
+
+    return;
+
+  }
+
+  sequence = tempSequence;
+
+  currentIndex = 0;
+
+  localStorage.setItem(
+    "sequence",
+    JSON.stringify(sequence)
+  );
+
+  localStorage.setItem(
+    "currentIndex",
+    currentIndex
+  );
+
+  const hairSettings =
+    JSON.parse(
+      localStorage.getItem("hairSettings")
+    );
+
+  if (hairSettings) {
+
+    hairSettings.sequence =
+      tempSequence;
+
+    localStorage.setItem(
+      "hairSettings",
+      JSON.stringify(hairSettings)
+    );
+
+  }
+
+  updateStep();
+
+  tempSequence = [];
+
+  updateSequencePreview();
+
+  scheduleConfigPanel.classList.add("hidden");
+
+  alert("Sequência atualizada ✨");
+
+});
 
 // =========================
 // IR PARA RELATÓRIOS
