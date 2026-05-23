@@ -56,6 +56,8 @@ const resetBtn =
 const reportsBtn =
   document.getElementById("reports-btn");
 
+const settingsBtn =
+  document.getElementById("settings-btn");
 
 // =========================
 // DADOS
@@ -73,6 +75,17 @@ let currentIndex =
     localStorage.getItem("currentIndex")
   ) || 0;
 
+const hairSettings =
+  JSON.parse(
+    localStorage.getItem("hairSettings")
+  );
+
+if (!hairSettings) {
+
+  window.location.href =
+    "configuracoes.html";
+
+}
 
 // =========================
 // HISTÓRICO
@@ -571,6 +584,16 @@ reportsBtn.addEventListener("click", () => {
 
 });
 
+// =========================
+// IR PARA CONFIGURAÇÕES
+// =========================
+
+settingsBtn.addEventListener("click", () => {
+
+  window.location.href =
+    "configuracoes.html";
+
+});
 
 // =========================
 // SERVICE WORKER
