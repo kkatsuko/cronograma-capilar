@@ -113,13 +113,10 @@ optionCards.forEach((card) => {
 
   card.addEventListener("click", (event) => {
 
-    if (
-      event.target.tagName === "SELECT" ||
-      event.target.tagName === "INPUT" ||
-      event.target.classList.contains("config-seq-btn") ||
-      event.target.closest(".config-seq-btn") ||
-      event.target.id === "clear-config-sequence"
-    ) {
+    const clickedInsideConfig =
+      event.target.closest(".care-config");
+
+    if (clickedInsideConfig) {
       return;
     }
 
