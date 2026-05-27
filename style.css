@@ -93,10 +93,45 @@ small {
    CONFIGURAÇÃO DO CRONOGRAMA NO CARD
 ========================= */
 
-#toggle-schedule-config {
+.card-title-row {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.card-title-row h2 {
+  margin: 0;
+
+  font-size: 20px;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 14px;
+
   background: #f3efff;
+
   color: #4b35a8;
-  margin-top: 12px;
+
+  font-size: 18px;
+}
+
+#toggle-schedule-config {
+  margin-top: 0;
 }
 
 #schedule-config-panel {
