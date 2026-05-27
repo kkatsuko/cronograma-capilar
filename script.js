@@ -72,6 +72,48 @@ const saveSequenceBtn =
   document.getElementById("save-sequence-btn");
 
 
+// Configuração rápida do tônico
+
+const toggleTonicConfig =
+  document.getElementById("toggle-tonic-config");
+
+const tonicConfigPanel =
+  document.getElementById("tonic-config-panel");
+
+const quickTonicFrequency =
+  document.getElementById("quick-tonic-frequency");
+
+const quickTonicUseMonths =
+  document.getElementById("quick-tonic-use-months");
+
+const quickTonicPauseMonths =
+  document.getElementById("quick-tonic-pause-months");
+
+const saveTonicConfig =
+  document.getElementById("save-tonic-config");
+
+
+// Configuração rápida do oiling
+
+const toggleOilingConfig =
+  document.getElementById("toggle-oiling-config");
+
+const oilingConfigPanel =
+  document.getElementById("oiling-config-panel");
+
+const quickOilingFrequency =
+  document.getElementById("quick-oiling-frequency");
+
+const quickOilingUseMonths =
+  document.getElementById("quick-oiling-use-months");
+
+const quickOilingPauseMonths =
+  document.getElementById("quick-oiling-pause-months");
+
+const saveOilingConfig =
+  document.getElementById("save-oiling-config");
+
+
 // =========================
 // CONFIGURAÇÕES
 // =========================
@@ -538,7 +580,7 @@ washBtn.addEventListener("click", () => {
 
 
 // =========================
-// STATUS POR FREQUÊNCIA
+// STATUS POR FREQUÊNCIA EM DIAS
 // =========================
 
 function shouldDoToday(lastDate, frequencyDays) {
@@ -581,7 +623,7 @@ function updateTonicStatus() {
 
   if (!lastTonicDate) {
 
-    tonicStatus.innerText = "Sim ✅";
+    tonicStatus.innerText = "✅ sim";
 
     tonicBtn.disabled = false;
 
@@ -608,7 +650,7 @@ function updateTonicStatus() {
 
   if (diffMs <= 0) {
 
-    tonicStatus.innerText = "SIM";
+    tonicStatus.innerText = "✅ sim";
 
     tonicBtn.disabled = false;
 
@@ -616,7 +658,7 @@ function updateTonicStatus() {
 
   } else {
 
-    tonicStatus.innerText = "Não ❌";
+    tonicStatus.innerText = "❌ não";
 
     tonicBtn.disabled = true;
 
@@ -725,11 +767,11 @@ function updateOilingStatus() {
     )
   ) {
 
-    oilingStatus.innerText = "SIM";
+    oilingStatus.innerText = "✅ sim";
 
   } else {
 
-    oilingStatus.innerText = "NÃO";
+    oilingStatus.innerText = "❌ não";
 
   }
 
@@ -796,28 +838,6 @@ oilingBtn.addEventListener("click", () => {
 });
 
 
-// =========================
-// IR PARA RELATÓRIOS
-// =========================
-
-reportsBtn.addEventListener("click", () => {
-
-  window.location.href =
-    "relatorios.html";
-
-});
-
-
-// =========================
-// IR PARA CONFIGURAÇÕES
-// =========================
-
-settingsBtn.addEventListener("click", () => {
-
-  window.location.href =
-    "configuracoes.html";
-
-});
 // =========================
 // CONFIGURAÇÃO RÁPIDA DO TÔNICO
 // =========================
@@ -929,6 +949,31 @@ saveOilingConfig.addEventListener("click", () => {
 
 });
 
+
+// =========================
+// IR PARA RELATÓRIOS
+// =========================
+
+reportsBtn.addEventListener("click", () => {
+
+  window.location.href =
+    "relatorios.html";
+
+});
+
+
+// =========================
+// IR PARA CONFIGURAÇÕES
+// =========================
+
+settingsBtn.addEventListener("click", () => {
+
+  window.location.href =
+    "configuracoes.html";
+
+});
+
+
 // =========================
 // SERVICE WORKER
 // =========================
@@ -946,40 +991,3 @@ if ("serviceWorker" in navigator) {
     });
 
 }
-
-const toggleTonicConfig =
-  document.getElementById("toggle-tonic-config");
-
-const tonicConfigPanel =
-  document.getElementById("tonic-config-panel");
-
-const quickTonicFrequency =
-  document.getElementById("quick-tonic-frequency");
-
-const quickTonicUseMonths =
-  document.getElementById("quick-tonic-use-months");
-
-const quickTonicPauseMonths =
-  document.getElementById("quick-tonic-pause-months");
-
-const saveTonicConfig =
-  document.getElementById("save-tonic-config");
-
-
-const toggleOilingConfig =
-  document.getElementById("toggle-oiling-config");
-
-const oilingConfigPanel =
-  document.getElementById("oiling-config-panel");
-
-const quickOilingFrequency =
-  document.getElementById("quick-oiling-frequency");
-
-const quickOilingUseMonths =
-  document.getElementById("quick-oiling-use-months");
-
-const quickOilingPauseMonths =
-  document.getElementById("quick-oiling-pause-months");
-
-const saveOilingConfig =
-  document.getElementById("save-oiling-config");
