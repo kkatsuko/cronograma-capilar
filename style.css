@@ -389,3 +389,20 @@ button:disabled {
 
   cursor: not-allowed;
 }
+
+.quick-config-panel {
+  margin-top: 18px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #eee;
+}
+
+#save-tonic-config,
+#save-oiling-config {
+  background: #7b5cff;
+
+  color: white;
+
+  margin-top: 5px;
+}
