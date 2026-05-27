@@ -78,8 +78,8 @@ if (savedSettings) {
 
   if (savedSettings.tonic) {
 
-    tonicFrequency.value =
-      savedSettings.tonic.frequencyDays || 2;
+tonicFrequency.value =
+  savedSettings.tonic.frequencyHours || 48;
 
     tonicUseMonths.value =
       savedSettings.tonic.useMonths || 3;
@@ -312,11 +312,11 @@ saveSettingsBtn.addEventListener("click", () => {
 
     sequence: selectedSequence,
 
-    tonic: {
-      frequencyDays: Number(tonicFrequency.value),
-      useMonths: Number(tonicUseMonths.value),
-      pauseMonths: Number(tonicPauseMonths.value)
-    },
+tonic: {
+  frequencyHours: Number(tonicFrequency.value),
+  useMonths: Number(tonicUseMonths.value),
+  pauseMonths: Number(tonicPauseMonths.value)
+},
 
     oiling: {
       frequencyDays: Number(oilingFrequency.value),
