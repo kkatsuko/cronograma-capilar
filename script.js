@@ -623,7 +623,7 @@ function updateTonicStatus() {
 
   if (!lastTonicDate) {
 
-    tonicStatus.innerText = "✅ sim";
+    tonicStatus.innerText = "Sim ✅";
 
     tonicBtn.disabled = false;
 
@@ -650,7 +650,7 @@ function updateTonicStatus() {
 
   if (diffMs <= 0) {
 
-    tonicStatus.innerText = "✅ sim";
+    tonicStatus.innerText = "Sim ✅";
 
     tonicBtn.disabled = false;
 
@@ -658,7 +658,7 @@ function updateTonicStatus() {
 
   } else {
 
-    tonicStatus.innerText = "❌ não";
+    tonicStatus.innerText = "Não ❌";
 
     tonicBtn.disabled = true;
 
@@ -767,11 +767,11 @@ function updateOilingStatus() {
     )
   ) {
 
-    oilingStatus.innerText = "✅ sim";
+    oilingStatus.innerText = "Sim ✅";
 
   } else {
 
-    oilingStatus.innerText = "❌ não";
+    oilingStatus.innerText = "Não ❌";
 
   }
 
