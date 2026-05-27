@@ -581,7 +581,7 @@ function updateTonicStatus() {
 
   if (!lastTonicDate) {
 
-    tonicStatus.innerText = "SIM";
+    tonicStatus.innerText = "Sim ✅";
 
     tonicBtn.disabled = false;
 
@@ -616,7 +616,7 @@ function updateTonicStatus() {
 
   } else {
 
-    tonicStatus.innerText = "NÃO";
+    tonicStatus.innerText = "Não ❌";
 
     tonicBtn.disabled = true;
 
@@ -673,29 +673,13 @@ function updateLastTonic() {
 
   }
 
-const frequencyHours =
-  hairSettings?.tonic?.frequencyHours || 48;
+  lastTonic.innerHTML = `
 
-const lastDate =
-  new Date(lastTonicItem.date);
+    Última aplicação:
+    <br>
+    ${formatDate(lastTonicItem.date)}
 
-const nextDate =
-  new Date(
-    lastDate.getTime() +
-    frequencyHours * 60 * 60 * 1000
-  );
-
-lastTonic.innerHTML = `
-
-  Última aplicação:
-  <br>
-  ${formatDate(lastTonicItem.date)}
-  <br><br>
-  Próxima aplicação:
-  <br>
-  ${formatDate(nextDate)}
-
-`;
+  `;
 
 }
 
