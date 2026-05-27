@@ -73,13 +73,84 @@ function getStepName(step) {
 
 function saveHistory() {
 
+  history.sort((a, b) => {
+
+    return new Date(b.date) - new Date(a.date);
+
+  });
+
   localStorage.setItem(
     "history",
     JSON.stringify(history)
   );
 
-}
+  syncLastDates();
 
+}
+// =========================
+// SINCRONIZAR ÚLTIMAS DATAS
+// =========================
+
+function syncLastDates() {
+
+  const lastWash =
+    history.find(
+      item => item.type === "wash"
+    );
+
+  const lastTonic =
+    history.find(
+      item => item.type === "tonic"
+    );
+
+  const lastOiling =
+    history.find(
+      item => item.type === "oiling"
+    );
+
+
+  if (lastWash) {
+
+    localStorage.setItem(
+      "lastWashDate",
+      lastWash.date
+    );
+
+  } else {
+
+    localStorage.removeItem("lastWashDate");
+
+  }
+
+
+  if (lastTonic) {
+
+    localStorage.setItem(
+      "lastTonicDate",
+      lastTonic.date
+    );
+
+  } else {
+
+    localStorage.removeItem("lastTonicDate");
+
+  }
+
+
+  if (lastOiling) {
+
+    localStorage.setItem(
+      "lastOilingDate",
+      lastOiling.date
+    );
+
+  } else {
+
+    localStorage.removeItem("lastOilingDate");
+
+  }
+
+}
 
 // =========================
 // EXCLUIR ITEM
