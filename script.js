@@ -576,21 +576,70 @@ function updateTonicStatus() {
   const lastTonicDate =
     localStorage.getItem("lastTonicDate");
 
-  const frequency =
-    hairSettings?.tonic?.frequencyDays || 2;
+  const frequencyHours =
+    hairSettings?.tonic?.frequencyHours || 48;
 
-  if (
-    shouldDoToday(
-      lastTonicDate,
-      frequency
-    )
-  ) {
+  if (!lastTonicDate) {
 
     tonicStatus.innerText = "SIM";
+
+    tonicBtn.disabled = false;
+
+    tonicBtn.innerText = "✔ Tônico OK";
+
+    return;
+
+  }
+
+  const now =
+    new Date();
+
+  const last =
+    new Date(lastTonicDate);
+
+  const nextApplication =
+    new Date(
+      last.getTime() +
+      frequencyHours * 60 * 60 * 1000
+    );
+
+  const diffMs =
+    nextApplication - now;
+
+  if (diffMs <= 0) {
+
+    tonicStatus.innerText = "SIM";
+
+    tonicBtn.disabled = false;
+
+    tonicBtn.innerText = "✔ Tônico OK";
 
   } else {
 
     tonicStatus.innerText = "NÃO";
+
+    tonicBtn.disabled = true;
+
+    const totalMinutes =
+      Math.ceil(diffMs / (1000 * 60));
+
+    const hours =
+      Math.floor(totalMinutes / 60);
+
+    const minutes =
+      totalMinutes % 60;
+
+    if (hours > 0) {
+
+      tonicBtn.innerText =
+        `⏳ Aguarde ${hours}h ${minutes}min`;
+
+    } else {
+
+      tonicBtn.innerText =
+        `⏳ Aguarde ${minutes}min`;
+
+    }
 
   }
 
@@ -624,13 +673,29 @@ function updateLastTonic() {
 
   }
 
-  lastTonic.innerHTML = `
+const frequencyHours =
+  hairSettings?.tonic?.frequencyHours || 48;
 
-    Última aplicação:
-    <br>
-    ${formatDate(lastTonicItem.date)}
+const lastDate =
+  new Date(lastTonicItem.date);
 
-  `;
+const nextDate =
+  new Date(
+    lastDate.getTime() +
+    frequencyHours * 60 * 60 * 1000
+  );
+
+lastTonic.innerHTML = `
+
+  Última aplicação:
+  <br>
+  ${formatDate(lastTonicItem.date)}
+  <br><br>
+  Próxima aplicação:
+  <br>
+  ${formatDate(nextDate)}
+
+`;
 
 }
 
