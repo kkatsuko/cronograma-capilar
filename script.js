@@ -837,3 +837,40 @@ if ("serviceWorker" in navigator) {
     });
 
 }
+
+const toggleTonicConfig =
+  document.getElementById("toggle-tonic-config");
+
+const tonicConfigPanel =
+  document.getElementById("tonic-config-panel");
+
+const quickTonicFrequency =
+  document.getElementById("quick-tonic-frequency");
+
+const quickTonicUseMonths =
+  document.getElementById("quick-tonic-use-months");
+
+const quickTonicPauseMonths =
+  document.getElementById("quick-tonic-pause-months");
+
+const saveTonicConfig =
+  document.getElementById("save-tonic-config");
+
+
+const toggleOilingConfig =
+  document.getElementById("toggle-oiling-config");
+
+const oilingConfigPanel =
+  document.getElementById("oiling-config-panel");
+
+const quickOilingFrequency =
+  document.getElementById("quick-oiling-frequency");
+
+const quickOilingUseMonths =
+  document.getElementById("quick-oiling-use-months");
+
+const quickOilingPauseMonths =
+  document.getElementById("quick-oiling-pause-months");
+
+const saveOilingConfig =
+  document.getElementById("save-oiling-config");
