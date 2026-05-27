@@ -818,7 +818,116 @@ settingsBtn.addEventListener("click", () => {
     "configuracoes.html";
 
 });
+// =========================
+// CONFIGURAÇÃO RÁPIDA DO TÔNICO
+// =========================
 
+function loadQuickTonicConfig() {
+
+  quickTonicFrequency.value =
+    hairSettings?.tonic?.frequencyHours || 48;
+
+  quickTonicUseMonths.value =
+    hairSettings?.tonic?.useMonths || 3;
+
+  quickTonicPauseMonths.value =
+    hairSettings?.tonic?.pauseMonths || 3;
+
+}
+
+loadQuickTonicConfig();
+
+
+toggleTonicConfig.addEventListener("click", () => {
+
+  tonicConfigPanel.classList.toggle("hidden");
+
+});
+
+
+saveTonicConfig.addEventListener("click", () => {
+
+  const savedSettings =
+    JSON.parse(
+      localStorage.getItem("hairSettings")
+    );
+
+  if (!savedSettings) {
+    return;
+  }
+
+  savedSettings.tonic = {
+    frequencyHours: Number(quickTonicFrequency.value),
+    useMonths: Number(quickTonicUseMonths.value),
+    pauseMonths: Number(quickTonicPauseMonths.value)
+  };
+
+  localStorage.setItem(
+    "hairSettings",
+    JSON.stringify(savedSettings)
+  );
+
+  alert("Configuração do tônico salva ✨");
+
+  location.reload();
+
+});
+
+
+// =========================
+// CONFIGURAÇÃO RÁPIDA DO OILING
+// =========================
+
+function loadQuickOilingConfig() {
+
+  quickOilingFrequency.value =
+    hairSettings?.oiling?.frequencyDays || 7;
+
+  quickOilingUseMonths.value =
+    hairSettings?.oiling?.useMonths || 3;
+
+  quickOilingPauseMonths.value =
+    hairSettings?.oiling?.pauseMonths || 0;
+
+}
+
+loadQuickOilingConfig();
+
+
+toggleOilingConfig.addEventListener("click", () => {
+
+  oilingConfigPanel.classList.toggle("hidden");
+
+});
+
+
+saveOilingConfig.addEventListener("click", () => {
+
+  const savedSettings =
+    JSON.parse(
+      localStorage.getItem("hairSettings")
+    );
+
+  if (!savedSettings) {
+    return;
+  }
+
+  savedSettings.oiling = {
+    frequencyDays: Number(quickOilingFrequency.value),
+    useMonths: Number(quickOilingUseMonths.value),
+    pauseMonths: Number(quickOilingPauseMonths.value)
+  };
+
+  localStorage.setItem(
+    "hairSettings",
+    JSON.stringify(savedSettings)
+  );
+
+  alert("Configuração do oiling salva ✨");
+
+  location.reload();
+
+});
 
 // =========================
 // SERVICE WORKER
