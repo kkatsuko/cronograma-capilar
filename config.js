@@ -47,8 +47,8 @@ const oilingUseMonths =
 const oilingPauseMonths =
   document.getElementById("oiling-pause-months");
 
-const birthControlStartDate =
-  document.getElementById("birth-control-start-date");
+const birthControlCurrentPill =
+  document.getElementById("birth-control-current-pill");
 
 const birthControlPillCount =
   document.getElementById("birth-control-pill-count");
@@ -118,18 +118,18 @@ if (savedSettings) {
 
   }
 
-  if (savedSettings.birthControl) {
+if (savedSettings.birthControl) {
 
-    birthControlStartDate.value =
-      savedSettings.birthControl.startDate || "";
+  birthControlPillCount.value =
+    savedSettings.birthControl.pillCount || 21;
 
-    birthControlPillCount.value =
-      savedSettings.birthControl.pillCount || 21;
+  birthControlPauseDays.value =
+    savedSettings.birthControl.pauseDays || 7;
 
-    birthControlPauseDays.value =
-      savedSettings.birthControl.pauseDays || 7;
+  birthControlCurrentPill.value =
+    savedSettings.birthControl.currentPillToday || 1;
 
-  }
+}
 
 }
 
@@ -346,19 +346,55 @@ saveSettingsBtn.addEventListener("click", () => {
 
   }
 
-  if (
-    selectedCare.birthControl &&
-    !birthControlStartDate.value
-  ) {
+if (
+  selectedCare.birthControl &&
+  !birthControlCurrentPill.value
+) {
 
-    alert(
-      "Você selecionou anticoncepcional. Informe a data em que começou a cartela."
-    );
+  alert(
+    "Você selecionou anticoncepcional. Informe qual comprimido você toma hoje."
+  );
 
-    return;
+  return;
 
-  }
+}
+const currentPillToday =
+  Number(birthControlCurrentPill.value);
 
+const pillCount =
+  Number(birthControlPillCount.value);
+
+if (
+  selectedCare.birthControl &&
+  currentPillToday > pillCount
+) {
+
+  alert(
+    "O comprimido de hoje não pode ser maior que a quantidade de comprimidos da cartela."
+  );
+
+  return;
+
+}
+
+const today =
+  new Date();
+
+const calculatedStartDate =
+  new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+calculatedStartDate.setDate(
+  calculatedStartDate.getDate() - (currentPillToday - 1)
+);
+
+const calculatedStartDateString =
+  calculatedStartDate
+    .toISOString()
+    .split("T")[0];
   const settings = {
 
     care: selectedCare,
@@ -377,11 +413,12 @@ saveSettingsBtn.addEventListener("click", () => {
       pauseMonths: Number(oilingPauseMonths.value)
     },
 
-    birthControl: {
-      startDate: birthControlStartDate.value,
-      pillCount: Number(birthControlPillCount.value),
-      pauseDays: Number(birthControlPauseDays.value)
-    }
+birthControl: {
+  startDate: calculatedStartDateString,
+  currentPillToday: currentPillToday,
+  pillCount: Number(birthControlPillCount.value),
+  pauseDays: Number(birthControlPauseDays.value)
+}
 
   };
 
