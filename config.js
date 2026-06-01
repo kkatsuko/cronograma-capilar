@@ -14,6 +14,9 @@ const scheduleConfig =
 const oilingConfig =
   document.getElementById("oiling-config");
 
+const birthControlConfig =
+  document.getElementById("birth-control-config");
+
 const configSeqButtons =
   document.querySelectorAll(".config-seq-btn");
 
@@ -44,6 +47,15 @@ const oilingUseMonths =
 const oilingPauseMonths =
   document.getElementById("oiling-pause-months");
 
+const birthControlStartDate =
+  document.getElementById("birth-control-start-date");
+
+const birthControlPillCount =
+  document.getElementById("birth-control-pill-count");
+
+const birthControlPauseDays =
+  document.getElementById("birth-control-pause-days");
+
 
 // =========================
 // DADOS TEMPORÁRIOS
@@ -53,6 +65,7 @@ let selectedCare = {
   tonic: false,
   schedule: false,
   oiling: false,
+  birthControl: false,
   dayAfter: false
 };
 
@@ -71,15 +84,18 @@ const savedSettings =
 if (savedSettings) {
 
   selectedCare =
-    savedSettings.care || selectedCare;
+    {
+      ...selectedCare,
+      ...(savedSettings.care || {})
+    };
 
   selectedSequence =
     savedSettings.sequence || [];
 
   if (savedSettings.tonic) {
 
-tonicFrequency.value =
-  savedSettings.tonic.frequencyHours || 48;
+    tonicFrequency.value =
+      savedSettings.tonic.frequencyHours || 48;
 
     tonicUseMonths.value =
       savedSettings.tonic.useMonths || 3;
@@ -99,6 +115,19 @@ tonicFrequency.value =
 
     oilingPauseMonths.value =
       savedSettings.oiling.pauseMonths || 0;
+
+  }
+
+  if (savedSettings.birthControl) {
+
+    birthControlStartDate.value =
+      savedSettings.birthControl.startDate || "";
+
+    birthControlPillCount.value =
+      savedSettings.birthControl.pillCount || 21;
+
+    birthControlPauseDays.value =
+      savedSettings.birthControl.pauseDays || 7;
 
   }
 
@@ -195,6 +224,17 @@ function updateSelectedCards() {
   } else {
 
     oilingConfig.classList.add("hidden");
+
+  }
+
+
+  if (selectedCare.birthControl) {
+
+    birthControlConfig.classList.remove("hidden");
+
+  } else {
+
+    birthControlConfig.classList.add("hidden");
 
   }
 
@@ -306,22 +346,41 @@ saveSettingsBtn.addEventListener("click", () => {
 
   }
 
+  if (
+    selectedCare.birthControl &&
+    !birthControlStartDate.value
+  ) {
+
+    alert(
+      "Você selecionou anticoncepcional. Informe a data em que começou a cartela."
+    );
+
+    return;
+
+  }
+
   const settings = {
 
     care: selectedCare,
 
     sequence: selectedSequence,
 
-tonic: {
-  frequencyHours: Number(tonicFrequency.value),
-  useMonths: Number(tonicUseMonths.value),
-  pauseMonths: Number(tonicPauseMonths.value)
-},
+    tonic: {
+      frequencyHours: Number(tonicFrequency.value),
+      useMonths: Number(tonicUseMonths.value),
+      pauseMonths: Number(tonicPauseMonths.value)
+    },
 
     oiling: {
       frequencyDays: Number(oilingFrequency.value),
       useMonths: Number(oilingUseMonths.value),
       pauseMonths: Number(oilingPauseMonths.value)
+    },
+
+    birthControl: {
+      startDate: birthControlStartDate.value,
+      pillCount: Number(birthControlPillCount.value),
+      pauseDays: Number(birthControlPauseDays.value)
     }
 
   };
