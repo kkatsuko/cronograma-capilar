@@ -73,6 +73,30 @@ let selectedSequence = [];
 
 
 // =========================
+// FUNÇÕES DE DATA
+// =========================
+
+function formatLocalDateKey(date) {
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, "0");
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+
+}
+
+
+// =========================
 // CARREGAR CONFIGURAÇÕES EXISTENTES
 // =========================
 
@@ -83,14 +107,14 @@ const savedSettings =
 
 if (savedSettings) {
 
-  selectedCare =
-    {
-      ...selectedCare,
-      ...(savedSettings.care || {})
-    };
+  selectedCare = {
+    ...selectedCare,
+    ...(savedSettings.care || {})
+  };
 
   selectedSequence =
     savedSettings.sequence || [];
+
 
   if (savedSettings.tonic) {
 
@@ -105,6 +129,7 @@ if (savedSettings) {
 
   }
 
+
   if (savedSettings.oiling) {
 
     oilingFrequency.value =
@@ -118,18 +143,19 @@ if (savedSettings) {
 
   }
 
-if (savedSettings.birthControl) {
 
-  birthControlPillCount.value =
-    savedSettings.birthControl.pillCount || 21;
+  if (savedSettings.birthControl) {
 
-  birthControlPauseDays.value =
-    savedSettings.birthControl.pauseDays || 7;
+    birthControlPillCount.value =
+      savedSettings.birthControl.pillCount || 21;
 
-  birthControlCurrentPill.value =
-    savedSettings.birthControl.currentPillToday || 1;
+    birthControlPauseDays.value =
+      savedSettings.birthControl.pauseDays || 7;
 
-}
+    birthControlCurrentPill.value =
+      savedSettings.birthControl.currentPillToday || 1;
+
+  }
 
 }
 
@@ -292,6 +318,8 @@ function getStepIcon(step) {
     return "🧬";
   }
 
+  return "✨";
+
 }
 
 
@@ -346,57 +374,63 @@ saveSettingsBtn.addEventListener("click", () => {
 
   }
 
-if (
-  selectedCare.birthControl &&
-  !birthControlCurrentPill.value
-) {
 
-  alert(
-    "Você selecionou anticoncepcional. Informe qual comprimido você toma hoje."
+  if (
+    selectedCare.birthControl &&
+    !birthControlCurrentPill.value
+  ) {
+
+    alert(
+      "Você selecionou anticoncepcional. Informe qual comprimido você toma hoje."
+    );
+
+    return;
+
+  }
+
+
+  const currentPillToday =
+    Number(birthControlCurrentPill.value);
+
+  const pillCount =
+    Number(birthControlPillCount.value);
+
+  const pauseDays =
+    Number(birthControlPauseDays.value);
+
+
+  if (
+    selectedCare.birthControl &&
+    currentPillToday > pillCount
+  ) {
+
+    alert(
+      "O comprimido de hoje não pode ser maior que a quantidade de comprimidos da cartela."
+    );
+
+    return;
+
+  }
+
+
+  const today =
+    new Date();
+
+  const calculatedStartDate =
+    new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+
+  calculatedStartDate.setDate(
+    calculatedStartDate.getDate() - (currentPillToday - 1)
   );
 
-  return;
+  const calculatedStartDateString =
+    formatLocalDateKey(calculatedStartDate);
 
-}
-const currentPillToday =
-  Number(birthControlCurrentPill.value);
 
-const pillCount =
-  Number(birthControlPillCount.value);
-
-if (
-  selectedCare.birthControl &&
-  currentPillToday > pillCount
-) {
-
-  alert(
-    "O comprimido de hoje não pode ser maior que a quantidade de comprimidos da cartela."
-  );
-
-  return;
-
-}
-
-const today =
-  new Date();
-
-const calculatedStartDate =
-  new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
-
-calculatedStartDate.setDate(
-  calculatedStartDate.getDate() - (currentPillToday - 1)
-);
-
-const calculatedStartDateString =
-  `${calculatedStartDate.getFullYear()}-${String(
-    calculatedStartDate.getMonth() + 1
-  ).padStart(2, "0")}-${String(
-    calculatedStartDate.getDate()
-  ).padStart(2, "0")}`;
   const settings = {
 
     care: selectedCare,
@@ -415,12 +449,12 @@ const calculatedStartDateString =
       pauseMonths: Number(oilingPauseMonths.value)
     },
 
-birthControl: {
-  startDate: calculatedStartDateString,
-  currentPillToday: currentPillToday,
-  pillCount: Number(birthControlPillCount.value),
-  pauseDays: Number(birthControlPauseDays.value)
-}
+    birthControl: {
+      startDate: calculatedStartDateString,
+      currentPillToday: currentPillToday,
+      pillCount: pillCount,
+      pauseDays: pauseDays
+    }
 
   };
 
