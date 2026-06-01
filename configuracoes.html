@@ -224,7 +224,59 @@
       </button>
 
     </div>
+<!-- ANTICONCEPCIONAL -->
 
+<div class="card option-card" data-care="birthControl">
+
+  <h2>💊 Anticoncepcional</h2>
+
+  <p>
+    Controle diário da cartela e dos dias de pausa.
+  </p>
+
+  <button class="care-toggle" type="button">
+    Selecionar
+  </button>
+
+  <div id="birth-control-config" class="care-config hidden">
+
+    <label>
+      Data que começou a cartela
+
+      <input
+        type="date"
+        id="birth-control-start-date"
+      >
+
+    </label>
+
+    <label>
+      Quantos comprimidos tem a cartela?
+
+      <input
+        type="number"
+        id="birth-control-pill-count"
+        value="21"
+        min="1"
+      >
+
+    </label>
+
+    <label>
+      Quantos dias de pausa?
+
+      <input
+        type="number"
+        id="birth-control-pause-days"
+        value="7"
+        min="0"
+      >
+
+    </label>
+
+  </div>
+
+</div>
 
     <button id="save-settings-btn" type="button">
       💾 Salvar e ir para o app
