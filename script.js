@@ -70,7 +70,17 @@ const undoBtn =
 
 const saveSequenceBtn =
   document.getElementById("save-sequence-btn");
+const birthControlCard =
+  document.getElementById("birth-control-card");
 
+const birthControlStatus =
+  document.getElementById("birth-control-status");
+
+const birthControlWarning =
+  document.getElementById("birth-control-warning");
+
+const birthControlBtn =
+  document.getElementById("birth-control-btn");
 
 // Configuração rápida do tônico
 
@@ -148,7 +158,10 @@ if (hairSettings) {
   if (!hairSettings.care.oiling) {
     oilingCard.classList.add("hidden");
   }
-
+  
+if (!hairSettings.care.birthControl) {
+  birthControlCard.classList.add("hidden");
+}
 }
 
 
@@ -948,7 +961,283 @@ saveOilingConfig.addEventListener("click", () => {
   location.reload();
 
 });
+// =========================
+// ANTICONCEPCIONAL
+// =========================
 
+function getDateKey(date) {
+
+  return date.toISOString().split("T")[0];
+
+}
+
+
+function getLocalDateFromInput(dateString) {
+
+  const parts =
+    dateString.split("-");
+
+  return new Date(
+    Number(parts[0]),
+    Number(parts[1]) - 1,
+    Number(parts[2])
+  );
+
+}
+
+
+function getDaysDifference(startDate, currentDate) {
+
+  const start =
+    new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate()
+    );
+
+  const current =
+    new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
+
+  const diffTime =
+    current - start;
+
+  return Math.floor(
+    diffTime /
+    (1000 * 60 * 60 * 24)
+  );
+
+}
+
+
+function getBirthControlInfo() {
+
+  const config =
+    hairSettings?.birthControl;
+
+  if (
+    !config ||
+    !config.startDate ||
+    !config.pillCount
+  ) {
+
+    return null;
+
+  }
+
+  const startDate =
+    getLocalDateFromInput(
+      config.startDate
+    );
+
+  const today =
+    new Date();
+
+  const pillCount =
+    config.pillCount;
+
+  const pauseDays =
+    config.pauseDays || 0;
+
+  const cycleLength =
+    pillCount + pauseDays;
+
+  const daysPassed =
+    getDaysDifference(
+      startDate,
+      today
+    );
+
+  if (daysPassed < 0) {
+
+    return {
+      type: "future",
+      text: "Ainda não começou",
+      shouldTake: false
+    };
+
+  }
+
+  const cycleDay =
+    daysPassed % cycleLength;
+
+  if (cycleDay < pillCount) {
+
+    return {
+      type: "pill",
+      text: `Dia ${cycleDay + 1}`,
+      shouldTake: true
+    };
+
+  }
+
+  const pauseDay =
+    cycleDay - pillCount + 1;
+
+  return {
+    type: "pause",
+    text: `Pausa - dia ${pauseDay}`,
+    shouldTake: false
+  };
+
+}
+
+
+function updateBirthControlStatus() {
+
+  const info =
+    getBirthControlInfo();
+
+  if (!info) {
+
+    birthControlStatus.innerText =
+      "Configure sua cartela";
+
+    birthControlWarning.innerText =
+      "";
+
+    birthControlBtn.disabled =
+      true;
+
+    return;
+
+  }
+
+  birthControlStatus.innerText =
+    info.text;
+
+  if (!info.shouldTake) {
+
+    birthControlBtn.disabled =
+      true;
+
+    birthControlBtn.innerText =
+      "Pausa";
+
+    birthControlWarning.innerText =
+      "";
+
+    return;
+
+  }
+
+  const todayKey =
+    getDateKey(new Date());
+
+  const yesterday =
+    new Date();
+
+  yesterday.setDate(
+    yesterday.getDate() - 1
+  );
+
+  const yesterdayKey =
+    getDateKey(yesterday);
+
+  const takenToday =
+    localStorage.getItem(
+      `birthControlTaken-${todayKey}`
+    );
+
+  const takenYesterday =
+    localStorage.getItem(
+      `birthControlTaken-${yesterdayKey}`
+    );
+
+  if (takenToday) {
+
+    birthControlBtn.disabled =
+      true;
+
+    birthControlBtn.innerText =
+      "✅ Tomado hoje";
+
+  } else {
+
+    birthControlBtn.disabled =
+      false;
+
+    birthControlBtn.innerText =
+      "✔ Tomei hoje";
+
+  }
+
+  const yesterdayInfoDate =
+    new Date();
+
+  yesterdayInfoDate.setDate(
+    yesterdayInfoDate.getDate() - 1
+  );
+
+  const config =
+    hairSettings?.birthControl;
+
+  const startDate =
+    getLocalDateFromInput(
+      config.startDate
+    );
+
+  const pillCount =
+    config.pillCount;
+
+  const pauseDays =
+    config.pauseDays || 0;
+
+  const cycleLength =
+    pillCount + pauseDays;
+
+  const daysPassedYesterday =
+    getDaysDifference(
+      startDate,
+      yesterdayInfoDate
+    );
+
+  const yesterdayWasPillDay =
+    daysPassedYesterday >= 0 &&
+    (
+      daysPassedYesterday % cycleLength
+    ) < pillCount;
+
+  if (
+    yesterdayWasPillDay &&
+    !takenYesterday
+  ) {
+
+    birthControlWarning.innerText =
+      "⚠️ Ontem você esqueceu!";
+
+  } else {
+
+    birthControlWarning.innerText =
+      "";
+
+  }
+
+}
+
+updateBirthControlStatus();
+
+
+birthControlBtn.addEventListener("click", () => {
+
+  const todayKey =
+    getDateKey(new Date());
+
+  localStorage.setItem(
+    `birthControlTaken-${todayKey}`,
+    "true"
+  );
+
+  saveHistory("birthControl", {
+    day: birthControlStatus.innerText
+  });
+
+  updateBirthControlStatus();
+
+});
 
 // =========================
 // IR PARA RELATÓRIOS
