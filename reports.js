@@ -16,6 +16,16 @@ const birthControlHistory =
 
 
 // =========================
+// CONFIGURAÇÕES
+// =========================
+
+const hairSettings =
+  JSON.parse(
+    localStorage.getItem("hairSettings")
+  );
+
+
+// =========================
 // HISTÓRICO
 // =========================
 
@@ -67,6 +77,47 @@ function getDateKey(date) {
 }
 
 
+function getLocalDateFromInput(dateString) {
+
+  const parts =
+    dateString.split("-");
+
+  return new Date(
+    Number(parts[0]),
+    Number(parts[1]) - 1,
+    Number(parts[2])
+  );
+
+}
+
+
+function getDaysDifference(startDate, currentDate) {
+
+  const start =
+    new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate()
+    );
+
+  const current =
+    new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
+
+  const diffTime =
+    current - start;
+
+  return Math.floor(
+    diffTime /
+    (1000 * 60 * 60 * 24)
+  );
+
+}
+
+
 // =========================
 // ETAPAS
 // =========================
@@ -86,6 +137,114 @@ function getStepName(step) {
   }
 
   return "✨ Etapa";
+
+}
+
+
+// =========================
+// ANTICONCEPCIONAL
+// =========================
+
+function getBirthControlInfo(date) {
+
+  const config =
+    hairSettings?.birthControl;
+
+  if (
+    !config ||
+    !config.startDate ||
+    !config.pillCount
+  ) {
+
+    return {
+      text: "Tomado",
+      shouldTake: true
+    };
+
+  }
+
+  const startDate =
+    getLocalDateFromInput(
+      config.startDate
+    );
+
+  const pillCount =
+    config.pillCount;
+
+  const pauseDays =
+    config.pauseDays || 0;
+
+  const cycleLength =
+    pillCount + pauseDays;
+
+  const daysPassed =
+    getDaysDifference(
+      startDate,
+      date
+    );
+
+  if (daysPassed < 0) {
+
+    return {
+      text: "Ainda não começou",
+      shouldTake: false
+    };
+
+  }
+
+  const cycleDay =
+    daysPassed % cycleLength;
+
+  if (cycleDay < pillCount) {
+
+    return {
+      text: `Dia ${cycleDay + 1}`,
+      shouldTake: true
+    };
+
+  }
+
+  const pauseDay =
+    cycleDay - pillCount + 1;
+
+  return {
+    text: `Pausa - dia ${pauseDay}`,
+    shouldTake: false
+  };
+
+}
+
+
+function rebuildBirthControlTakenKeys() {
+
+  Object.keys(localStorage).forEach((key) => {
+
+    if (key.startsWith("birthControlTaken-")) {
+
+      localStorage.removeItem(key);
+
+    }
+
+  });
+
+  history.forEach((item) => {
+
+    if (item.type !== "birthControl") {
+      return;
+    }
+
+    const date =
+      new Date(item.date);
+
+    const dateKey =
+      getDateKey(date);
+
+    localStorage.setItem(
+      `birthControlTaken-${dateKey}`,
+      "true"
+    );
+
+  });
 
 }
 
@@ -175,6 +334,8 @@ function saveHistory() {
 
   syncLastDates();
 
+  rebuildBirthControlTakenKeys();
+
 }
 
 
@@ -189,22 +350,6 @@ function deleteHistory(index) {
 
   if (!confirmDelete) {
     return;
-  }
-
-  const item =
-    history[index];
-
-  if (item.type === "birthControl") {
-
-    const dateKey =
-      getDateKey(
-        new Date(item.date)
-      );
-
-    localStorage.removeItem(
-      `birthControlTaken-${dateKey}`
-    );
-
   }
 
   history.splice(index, 1);
@@ -303,46 +448,36 @@ saveEdit.addEventListener("click", () => {
     return;
   }
 
-  const item =
-    history[currentEditIndex];
-
-  const oldDate =
-    new Date(item.date);
-
-  const oldKey =
-    getDateKey(oldDate);
-
   const newDate =
     `${editDate.value}T${editTime.value}`;
 
   const newDateObject =
     new Date(newDate);
 
-  const newKey =
-    getDateKey(newDateObject);
+  history[currentEditIndex].date =
+    newDateObject;
 
 
-  if (item.type === "birthControl") {
+  if (
+    history[currentEditIndex].type === "birthControl"
+  ) {
 
-    localStorage.removeItem(
-      `birthControlTaken-${oldKey}`
-    );
+    const birthControlInfo =
+      getBirthControlInfo(newDateObject);
 
-    localStorage.setItem(
-      `birthControlTaken-${newKey}`,
-      "true"
-    );
+    history[currentEditIndex].day =
+      birthControlInfo.text;
 
   }
 
-  history[currentEditIndex].date =
-    newDateObject;
 
   saveHistory();
 
   renderHistory();
 
   editModal.classList.add("hidden");
+
+  currentEditIndex = null;
 
 });
 
@@ -561,5 +696,7 @@ function renderHistory() {
 // =========================
 // INICIAR
 // =========================
+
+saveHistory();
 
 renderHistory();
