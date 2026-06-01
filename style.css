@@ -406,3 +406,13 @@ button:disabled {
 
   margin-top: 5px;
 }
+
+#birth-control-btn {
+  background: #ffe6f0;
+}
+
+#birth-control-warning {
+  color: #b85c00;
+
+  font-weight: 500;
+}
