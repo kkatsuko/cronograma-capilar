@@ -11,6 +11,9 @@ const scheduleCard =
 const oilingCard =
   document.getElementById("oiling-card");
 
+const birthControlCard =
+  document.getElementById("birth-control-card");
+
 const nextStep =
   document.getElementById("next-step");
 
@@ -22,6 +25,12 @@ const tonicStatus =
 
 const oilingStatus =
   document.getElementById("oiling-status");
+
+const birthControlStatus =
+  document.getElementById("birth-control-status");
+
+const birthControlWarning =
+  document.getElementById("birth-control-warning");
 
 const lastTonic =
   document.getElementById("last-tonic");
@@ -47,6 +56,9 @@ const tonicBtn =
 const oilingBtn =
   document.getElementById("oiling-btn");
 
+const birthControlBtn =
+  document.getElementById("birth-control-btn");
+
 const reportsBtn =
   document.getElementById("reports-btn");
 
@@ -70,17 +82,7 @@ const undoBtn =
 
 const saveSequenceBtn =
   document.getElementById("save-sequence-btn");
-const birthControlCard =
-  document.getElementById("birth-control-card");
 
-const birthControlStatus =
-  document.getElementById("birth-control-status");
-
-const birthControlWarning =
-  document.getElementById("birth-control-warning");
-
-const birthControlBtn =
-  document.getElementById("birth-control-btn");
 
 // Configuração rápida do tônico
 
@@ -158,10 +160,11 @@ if (hairSettings) {
   if (!hairSettings.care.oiling) {
     oilingCard.classList.add("hidden");
   }
-  
-if (!hairSettings.care.birthControl) {
-  birthControlCard.classList.add("hidden");
-}
+
+  if (!hairSettings.care.birthControl) {
+    birthControlCard.classList.add("hidden");
+  }
+
 }
 
 
@@ -186,12 +189,19 @@ let currentIndex =
 // HISTÓRICO
 // =========================
 
+function getHistory() {
+
+  return JSON.parse(
+    localStorage.getItem("history")
+  ) || [];
+
+}
+
+
 function saveHistory(type, data = {}) {
 
   const history =
-    JSON.parse(
-      localStorage.getItem("history")
-    ) || [];
+    getHistory();
 
   const newItem = {
 
@@ -233,6 +243,67 @@ function formatDate(dateString) {
     minute: "2-digit"
 
   });
+
+}
+
+
+function getDateKey(date) {
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, "0");
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+
+}
+
+
+function getLocalDateFromInput(dateString) {
+
+  const parts =
+    dateString.split("-");
+
+  return new Date(
+    Number(parts[0]),
+    Number(parts[1]) - 1,
+    Number(parts[2])
+  );
+
+}
+
+
+function getDaysDifference(startDate, currentDate) {
+
+  const start =
+    new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate()
+    );
+
+  const current =
+    new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
+
+  const diffTime =
+    current - start;
+
+  return Math.floor(
+    diffTime /
+    (1000 * 60 * 60 * 24)
+  );
 
 }
 
@@ -299,9 +370,7 @@ updateStep();
 function updateLastStep() {
 
   const history =
-    JSON.parse(
-      localStorage.getItem("history")
-    ) || [];
+    getHistory();
 
   const lastStepItem =
     history.find(
@@ -537,9 +606,7 @@ updateLastWashText();
 function updateWashHistoryPreview() {
 
   const history =
-    JSON.parse(
-      localStorage.getItem("history")
-    ) || [];
+    getHistory();
 
   const washes =
     history.filter(
@@ -710,9 +777,7 @@ updateTonicStatus();
 function updateLastTonic() {
 
   const history =
-    JSON.parse(
-      localStorage.getItem("history")
-    ) || [];
+    getHistory();
 
   const lastTonicItem =
     history.find(
@@ -800,9 +865,7 @@ updateOilingStatus();
 function updateLastOiling() {
 
   const history =
-    JSON.parse(
-      localStorage.getItem("history")
-    ) || [];
+    getHistory();
 
   const lastOilingItem =
     history.find(
@@ -961,72 +1024,13 @@ saveOilingConfig.addEventListener("click", () => {
   location.reload();
 
 });
+
+
 // =========================
 // ANTICONCEPCIONAL
 // =========================
 
-function getDateKey(date) {
-
-  const year =
-    date.getFullYear();
-
-  const month =
-    String(
-      date.getMonth() + 1
-    ).padStart(2, "0");
-
-  const day =
-    String(
-      date.getDate()
-    ).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-
-}
-
-
-function getLocalDateFromInput(dateString) {
-
-  const parts =
-    dateString.split("-");
-
-  return new Date(
-    Number(parts[0]),
-    Number(parts[1]) - 1,
-    Number(parts[2])
-  );
-
-}
-
-
-function getDaysDifference(startDate, currentDate) {
-
-  const start =
-    new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate()
-    );
-
-  const current =
-    new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
-    );
-
-  const diffTime =
-    current - start;
-
-  return Math.floor(
-    diffTime /
-    (1000 * 60 * 60 * 24)
-  );
-
-}
-
-
-function getBirthControlInfo() {
+function getBirthControlInfo(date = new Date()) {
 
   const config =
     hairSettings?.birthControl;
@@ -1046,9 +1050,6 @@ function getBirthControlInfo() {
       config.startDate
     );
 
-  const today =
-    new Date();
-
   const pillCount =
     config.pillCount;
 
@@ -1061,7 +1062,7 @@ function getBirthControlInfo() {
   const daysPassed =
     getDaysDifference(
       startDate,
-      today
+      date
     );
 
   if (daysPassed < 0) {
@@ -1095,6 +1096,39 @@ function getBirthControlInfo() {
     text: `Pausa - dia ${pauseDay}`,
     shouldTake: false
   };
+
+}
+
+
+function hasBirthControlTakenOn(date) {
+
+  const dateKey =
+    getDateKey(date);
+
+  const directRecord =
+    localStorage.getItem(
+      `birthControlTaken-${dateKey}`
+    );
+
+  if (directRecord) {
+    return true;
+  }
+
+  const history =
+    getHistory();
+
+  return history.some(item => {
+
+    if (item.type !== "birthControl") {
+      return false;
+    }
+
+    const itemDate =
+      new Date(item.date);
+
+    return getDateKey(itemDate) === dateKey;
+
+  });
 
 }
 
@@ -1137,28 +1171,11 @@ function updateBirthControlStatus() {
 
   }
 
-  const todayKey =
-    getDateKey(new Date());
-
-  const yesterday =
+  const today =
     new Date();
 
-  yesterday.setDate(
-    yesterday.getDate() - 1
-  );
-
-  const yesterdayKey =
-    getDateKey(yesterday);
-
   const takenToday =
-    localStorage.getItem(
-      `birthControlTaken-${todayKey}`
-    );
-
-  const takenYesterday =
-    localStorage.getItem(
-      `birthControlTaken-${yesterdayKey}`
-    );
+    hasBirthControlTakenOn(today);
 
   if (takenToday) {
 
@@ -1178,44 +1195,23 @@ function updateBirthControlStatus() {
 
   }
 
-  const yesterdayInfoDate =
+
+  const yesterday =
     new Date();
 
-  yesterdayInfoDate.setDate(
-    yesterdayInfoDate.getDate() - 1
+  yesterday.setDate(
+    yesterday.getDate() - 1
   );
 
-  const config =
-    hairSettings?.birthControl;
+  const yesterdayInfo =
+    getBirthControlInfo(yesterday);
 
-  const startDate =
-    getLocalDateFromInput(
-      config.startDate
-    );
-
-  const pillCount =
-    config.pillCount;
-
-  const pauseDays =
-    config.pauseDays || 0;
-
-  const cycleLength =
-    pillCount + pauseDays;
-
-  const daysPassedYesterday =
-    getDaysDifference(
-      startDate,
-      yesterdayInfoDate
-    );
-
-  const yesterdayWasPillDay =
-    daysPassedYesterday >= 0 &&
-    (
-      daysPassedYesterday % cycleLength
-    ) < pillCount;
+  const takenYesterday =
+    hasBirthControlTakenOn(yesterday);
 
   if (
-    yesterdayWasPillDay &&
+    yesterdayInfo &&
+    yesterdayInfo.shouldTake &&
     !takenYesterday
   ) {
 
@@ -1236,8 +1232,11 @@ updateBirthControlStatus();
 
 birthControlBtn.addEventListener("click", () => {
 
+  const today =
+    new Date();
+
   const todayKey =
-    getDateKey(new Date());
+    getDateKey(today);
 
   localStorage.setItem(
     `birthControlTaken-${todayKey}`,
@@ -1251,6 +1250,7 @@ birthControlBtn.addEventListener("click", () => {
   updateBirthControlStatus();
 
 });
+
 
 // =========================
 // IR PARA RELATÓRIOS
