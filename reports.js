@@ -11,6 +11,9 @@ const stepHistory =
 const tonicHistory =
   document.getElementById("tonic-history");
 
+const birthControlHistory =
+  document.getElementById("birth-control-history");
+
 
 // =========================
 // HISTÓRICO
@@ -44,6 +47,15 @@ function formatDate(dateString) {
 }
 
 
+function getDateKey(date) {
+
+  return date
+    .toISOString()
+    .split("T")[0];
+
+}
+
+
 // =========================
 // ETAPAS
 // =========================
@@ -67,26 +79,6 @@ function getStepName(step) {
 }
 
 
-// =========================
-// SALVAR HISTÓRICO
-// =========================
-
-function saveHistory() {
-
-  history.sort((a, b) => {
-
-    return new Date(b.date) - new Date(a.date);
-
-  });
-
-  localStorage.setItem(
-    "history",
-    JSON.stringify(history)
-  );
-
-  syncLastDates();
-
-}
 // =========================
 // SINCRONIZAR ÚLTIMAS DATAS
 // =========================
@@ -152,6 +144,29 @@ function syncLastDates() {
 
 }
 
+
+// =========================
+// SALVAR HISTÓRICO
+// =========================
+
+function saveHistory() {
+
+  history.sort((a, b) => {
+
+    return new Date(b.date) - new Date(a.date);
+
+  });
+
+  localStorage.setItem(
+    "history",
+    JSON.stringify(history)
+  );
+
+  syncLastDates();
+
+}
+
+
 // =========================
 // EXCLUIR ITEM
 // =========================
@@ -163,6 +178,22 @@ function deleteHistory(index) {
 
   if (!confirmDelete) {
     return;
+  }
+
+  const item =
+    history[index];
+
+  if (item.type === "birthControl") {
+
+    const dateKey =
+      getDateKey(
+        new Date(item.date)
+      );
+
+    localStorage.removeItem(
+      `birthControlTaken-${dateKey}`
+    );
+
   }
 
   history.splice(index, 1);
@@ -261,11 +292,40 @@ saveEdit.addEventListener("click", () => {
     return;
   }
 
+  const item =
+    history[currentEditIndex];
+
+  const oldDate =
+    new Date(item.date);
+
+  const oldKey =
+    getDateKey(oldDate);
+
   const newDate =
     `${editDate.value}T${editTime.value}`;
 
-  history[currentEditIndex].date =
+  const newDateObject =
     new Date(newDate);
+
+  const newKey =
+    getDateKey(newDateObject);
+
+
+  if (item.type === "birthControl") {
+
+    localStorage.removeItem(
+      `birthControlTaken-${oldKey}`
+    );
+
+    localStorage.setItem(
+      `birthControlTaken-${newKey}`,
+      "true"
+    );
+
+  }
+
+  history[currentEditIndex].date =
+    newDateObject;
 
   saveHistory();
 
@@ -288,6 +348,10 @@ function renderHistory() {
 
   tonicHistory.innerHTML = "";
 
+  if (birthControlHistory) {
+    birthControlHistory.innerHTML = "";
+  }
+
 
   const washes =
     history.filter(
@@ -304,6 +368,11 @@ function renderHistory() {
       item => item.type === "tonic"
     );
 
+  const birthControls =
+    history.filter(
+      item => item.type === "birthControl"
+    );
+
 
   if (washes.length === 0) {
     washHistory.innerHTML =
@@ -318,6 +387,16 @@ function renderHistory() {
   if (tonics.length === 0) {
     tonicHistory.innerHTML =
       "Nenhum registro ainda";
+  }
+
+  if (
+    birthControlHistory &&
+    birthControls.length === 0
+  ) {
+
+    birthControlHistory.innerHTML =
+      "Nenhum registro ainda";
+
   }
 
 
@@ -403,6 +482,44 @@ function renderHistory() {
 
           <p>
             🌱 Aplicado
+            <br>
+            ${formatDate(item.date)}
+          </p>
+
+          <div class="history-buttons">
+
+            <button type="button" onclick="editHistory(${index})">
+              ✏ Editar
+            </button>
+
+            <button type="button" onclick="deleteHistory(${index})">
+              🗑 Excluir
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    // =====================
+    // ANTICONCEPCIONAL
+    // =====================
+
+    if (
+      birthControlHistory &&
+      item.type === "birthControl"
+    ) {
+
+      birthControlHistory.innerHTML += `
+
+        <div class="history-item">
+
+          <p>
+            💊 ${item.day || "Tomado"}
             <br>
             ${formatDate(item.date)}
           </p>
