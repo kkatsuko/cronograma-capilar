@@ -392,9 +392,11 @@ calculatedStartDate.setDate(
 );
 
 const calculatedStartDateString =
-  calculatedStartDate
-    .toISOString()
-    .split("T")[0];
+  `${calculatedStartDate.getFullYear()}-${String(
+    calculatedStartDate.getMonth() + 1
+  ).padStart(2, "0")}-${String(
+    calculatedStartDate.getDate()
+  ).padStart(2, "0")}`;
   const settings = {
 
     care: selectedCare,
