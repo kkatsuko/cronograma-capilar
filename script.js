@@ -1030,6 +1030,9 @@ saveOilingConfig.addEventListener("click", () => {
 // ANTICONCEPCIONAL
 // =========================
 
+let activeBirthControlAction = null;
+
+
 function getBirthControlInfo(date = new Date()) {
 
   const config =
@@ -1078,11 +1081,19 @@ function getBirthControlInfo(date = new Date()) {
   const cycleDay =
     daysPassed % cycleLength;
 
+  const expectedDateKey =
+    getDateKey(date);
+
   if (cycleDay < pillCount) {
+
+    const pillNumber =
+      cycleDay + 1;
 
     return {
       type: "pill",
-      text: `Dia ${cycleDay + 1}`,
+      text: `CP ${pillNumber}`,
+      pillNumber: pillNumber,
+      expectedDateKey: expectedDateKey,
       shouldTake: true
     };
 
@@ -1100,14 +1111,11 @@ function getBirthControlInfo(date = new Date()) {
 }
 
 
-function hasBirthControlTakenOn(date) {
-
-  const dateKey =
-    getDateKey(date);
+function hasBirthControlTakenExpectedDate(expectedDateKey) {
 
   const directRecord =
     localStorage.getItem(
-      `birthControlTaken-${dateKey}`
+      `birthControlTaken-${expectedDateKey}`
     );
 
   if (directRecord) {
@@ -1123,22 +1131,129 @@ function hasBirthControlTakenOn(date) {
       return false;
     }
 
+    if (item.expectedDate) {
+      return item.expectedDate === expectedDateKey;
+    }
+
     const itemDate =
       new Date(item.date);
 
-    return getDateKey(itemDate) === dateKey;
+    return getDateKey(itemDate) === expectedDateKey;
 
   });
 
 }
 
 
+function getCurrentCycleStartDate() {
+
+  const config =
+    hairSettings?.birthControl;
+
+  if (
+    !config ||
+    !config.startDate ||
+    !config.pillCount
+  ) {
+
+    return null;
+
+  }
+
+  const startDate =
+    getLocalDateFromInput(
+      config.startDate
+    );
+
+  const today =
+    new Date();
+
+  const pillCount =
+    config.pillCount;
+
+  const pauseDays =
+    config.pauseDays || 0;
+
+  const cycleLength =
+    pillCount + pauseDays;
+
+  const daysPassed =
+    getDaysDifference(
+      startDate,
+      today
+    );
+
+  if (daysPassed < 0) {
+    return startDate;
+  }
+
+  const currentCycleStartOffset =
+    daysPassed - (daysPassed % cycleLength);
+
+  const cycleStart =
+    new Date(startDate);
+
+  cycleStart.setDate(
+    startDate.getDate() + currentCycleStartOffset
+  );
+
+  return cycleStart;
+
+}
+
+
+function getPendingBirthControlPill() {
+
+  const cycleStart =
+    getCurrentCycleStartDate();
+
+  if (!cycleStart) {
+    return null;
+  }
+
+  const today =
+    new Date();
+
+  const currentDate =
+    new Date(cycleStart);
+
+  while (currentDate <= today) {
+
+    const info =
+      getBirthControlInfo(currentDate);
+
+    if (
+      info &&
+      info.shouldTake &&
+      !hasBirthControlTakenExpectedDate(
+        info.expectedDateKey
+      )
+    ) {
+
+      return info;
+
+    }
+
+    currentDate.setDate(
+      currentDate.getDate() + 1
+    );
+
+  }
+
+  return null;
+
+}
+
+
 function updateBirthControlStatus() {
 
-  const info =
-    getBirthControlInfo();
+  const today =
+    new Date();
 
-  if (!info) {
+  const todayInfo =
+    getBirthControlInfo(today);
+
+  if (!todayInfo) {
 
     birthControlStatus.innerText =
       "Configure sua cartela";
@@ -1149,14 +1264,62 @@ function updateBirthControlStatus() {
     birthControlBtn.disabled =
       true;
 
+    activeBirthControlAction =
+      null;
+
+    return;
+
+  }
+
+  const pendingPill =
+    getPendingBirthControlPill();
+
+  if (
+    pendingPill &&
+    pendingPill.expectedDateKey !== getDateKey(today)
+  ) {
+
+    activeBirthControlAction =
+      pendingPill;
+
+    if (todayInfo.shouldTake) {
+
+      birthControlStatus.innerHTML = `
+        Hoje: ${todayInfo.text}
+        <br>
+        Pendente: ${pendingPill.text}
+      `;
+
+    } else {
+
+      birthControlStatus.innerHTML = `
+        ${todayInfo.text}
+        <br>
+        Pendente: ${pendingPill.text}
+      `;
+
+    }
+
+    birthControlWarning.innerText =
+      "⚠️ Há comprimido pendente";
+
+    birthControlBtn.disabled =
+      false;
+
+    birthControlBtn.innerText =
+      `✔ Tomei ${pendingPill.text}`;
+
     return;
 
   }
 
   birthControlStatus.innerText =
-    info.text;
+    todayInfo.text;
 
-  if (!info.shouldTake) {
+  birthControlWarning.innerText =
+    "";
+
+  if (!todayInfo.shouldTake) {
 
     birthControlBtn.disabled =
       true;
@@ -1164,18 +1327,17 @@ function updateBirthControlStatus() {
     birthControlBtn.innerText =
       "Pausa";
 
-    birthControlWarning.innerText =
-      "";
+    activeBirthControlAction =
+      null;
 
     return;
 
   }
 
-  const today =
-    new Date();
-
   const takenToday =
-    hasBirthControlTakenOn(today);
+    hasBirthControlTakenExpectedDate(
+      todayInfo.expectedDateKey
+    );
 
   if (takenToday) {
 
@@ -1183,7 +1345,10 @@ function updateBirthControlStatus() {
       true;
 
     birthControlBtn.innerText =
-      "✅ Tomado hoje";
+      `✅ ${todayInfo.text} tomado`;
+
+    activeBirthControlAction =
+      null;
 
   } else {
 
@@ -1191,37 +1356,10 @@ function updateBirthControlStatus() {
       false;
 
     birthControlBtn.innerText =
-      "✔ Tomei hoje";
+      `✔ Tomei ${todayInfo.text}`;
 
-  }
-
-
-  const yesterday =
-    new Date();
-
-  yesterday.setDate(
-    yesterday.getDate() - 1
-  );
-
-  const yesterdayInfo =
-    getBirthControlInfo(yesterday);
-
-  const takenYesterday =
-    hasBirthControlTakenOn(yesterday);
-
-  if (
-    yesterdayInfo &&
-    yesterdayInfo.shouldTake &&
-    !takenYesterday
-  ) {
-
-    birthControlWarning.innerText =
-      "⚠️ Ontem você esqueceu!";
-
-  } else {
-
-    birthControlWarning.innerText =
-      "";
+    activeBirthControlAction =
+      todayInfo;
 
   }
 
@@ -1232,19 +1370,32 @@ updateBirthControlStatus();
 
 birthControlBtn.addEventListener("click", () => {
 
+  if (!activeBirthControlAction) {
+    return;
+  }
+
   const today =
     new Date();
 
   const todayKey =
     getDateKey(today);
 
+  const expectedDateKey =
+    activeBirthControlAction.expectedDateKey;
+
+  const isLate =
+    expectedDateKey !== todayKey;
+
   localStorage.setItem(
-    `birthControlTaken-${todayKey}`,
+    `birthControlTaken-${expectedDateKey}`,
     "true"
   );
 
   saveHistory("birthControl", {
-    day: birthControlStatus.innerText
+    day: activeBirthControlAction.text,
+    pillNumber: activeBirthControlAction.pillNumber,
+    expectedDate: expectedDateKey,
+    isLate: isLate
   });
 
   updateBirthControlStatus();
