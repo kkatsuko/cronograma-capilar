@@ -403,3 +403,36 @@ small {
   color: white;
   margin-top: 5px;
 }
+
+
+/* =========================
+   RELATÓRIO EM LINHA
+========================= */
+
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.history-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.history-date {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.history-late {
+  background: #ffe6e6;
+  border: 1px solid #ffb3b3;
+}
+
+.history-late .history-label {
+  color: #8a1f1f;
+}
