@@ -48,7 +48,6 @@ function formatDate(dateString) {
 
     day: "2-digit",
     month: "2-digit",
-
     hour: "2-digit",
     minute: "2-digit"
 
@@ -77,47 +76,6 @@ function getDateKey(date) {
 }
 
 
-function getLocalDateFromInput(dateString) {
-
-  const parts =
-    dateString.split("-");
-
-  return new Date(
-    Number(parts[0]),
-    Number(parts[1]) - 1,
-    Number(parts[2])
-  );
-
-}
-
-
-function getDaysDifference(startDate, currentDate) {
-
-  const start =
-    new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate()
-    );
-
-  const current =
-    new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
-    );
-
-  const diffTime =
-    current - start;
-
-  return Math.floor(
-    diffTime /
-    (1000 * 60 * 60 * 24)
-  );
-
-}
-
-
 // =========================
 // ETAPAS
 // =========================
@@ -137,114 +95,6 @@ function getStepName(step) {
   }
 
   return "✨ Etapa";
-
-}
-
-
-// =========================
-// ANTICONCEPCIONAL
-// =========================
-
-function getBirthControlInfo(date) {
-
-  const config =
-    hairSettings?.birthControl;
-
-  if (
-    !config ||
-    !config.startDate ||
-    !config.pillCount
-  ) {
-
-    return {
-      text: "Tomado",
-      shouldTake: true
-    };
-
-  }
-
-  const startDate =
-    getLocalDateFromInput(
-      config.startDate
-    );
-
-  const pillCount =
-    config.pillCount;
-
-  const pauseDays =
-    config.pauseDays || 0;
-
-  const cycleLength =
-    pillCount + pauseDays;
-
-  const daysPassed =
-    getDaysDifference(
-      startDate,
-      date
-    );
-
-  if (daysPassed < 0) {
-
-    return {
-      text: "Ainda não começou",
-      shouldTake: false
-    };
-
-  }
-
-  const cycleDay =
-    daysPassed % cycleLength;
-
-  if (cycleDay < pillCount) {
-
-    return {
-      text: `Dia ${cycleDay + 1}`,
-      shouldTake: true
-    };
-
-  }
-
-  const pauseDay =
-    cycleDay - pillCount + 1;
-
-  return {
-    text: `Pausa - dia ${pauseDay}`,
-    shouldTake: false
-  };
-
-}
-
-
-function rebuildBirthControlTakenKeys() {
-
-  Object.keys(localStorage).forEach((key) => {
-
-    if (key.startsWith("birthControlTaken-")) {
-
-      localStorage.removeItem(key);
-
-    }
-
-  });
-
-  history.forEach((item) => {
-
-    if (item.type !== "birthControl") {
-      return;
-    }
-
-    const date =
-      new Date(item.date);
-
-    const dateKey =
-      getDateKey(date);
-
-    localStorage.setItem(
-      `birthControlTaken-${dateKey}`,
-      "true"
-    );
-
-  });
 
 }
 
@@ -311,6 +161,44 @@ function syncLastDates() {
     localStorage.removeItem("lastOilingDate");
 
   }
+
+}
+
+
+// =========================
+// RECRIAR MARCAÇÕES DO ANTICONCEPCIONAL
+// =========================
+
+function rebuildBirthControlTakenKeys() {
+
+  Object.keys(localStorage).forEach((key) => {
+
+    if (key.startsWith("birthControlTaken-")) {
+
+      localStorage.removeItem(key);
+
+    }
+
+  });
+
+  history.forEach((item) => {
+
+    if (item.type !== "birthControl") {
+      return;
+    }
+
+    const expectedDate =
+      item.expectedDate ||
+      getDateKey(
+        new Date(item.date)
+      );
+
+    localStorage.setItem(
+      `birthControlTaken-${expectedDate}`,
+      "true"
+    );
+
+  });
 
 }
 
@@ -435,6 +323,9 @@ cancelEdit.addEventListener("click", () => {
 
   editModal.classList.add("hidden");
 
+  currentEditIndex =
+    null;
+
 });
 
 
@@ -462,11 +353,18 @@ saveEdit.addEventListener("click", () => {
     history[currentEditIndex].type === "birthControl"
   ) {
 
-    const birthControlInfo =
-      getBirthControlInfo(newDateObject);
+    const actualDateKey =
+      getDateKey(newDateObject);
 
-    history[currentEditIndex].day =
-      birthControlInfo.text;
+    const expectedDate =
+      history[currentEditIndex].expectedDate ||
+      actualDateKey;
+
+    history[currentEditIndex].expectedDate =
+      expectedDate;
+
+    history[currentEditIndex].isLate =
+      expectedDate !== actualDateKey;
 
   }
 
@@ -477,9 +375,51 @@ saveEdit.addEventListener("click", () => {
 
   editModal.classList.add("hidden");
 
-  currentEditIndex = null;
+  currentEditIndex =
+    null;
 
 });
+
+
+// =========================
+// MONTAR ITEM VISUAL
+// =========================
+
+function createHistoryItem(label, date, index, extraClass = "") {
+
+  return `
+
+    <div class="history-item ${extraClass}">
+
+      <div class="history-row">
+
+        <span class="history-label">
+          ${label}
+        </span>
+
+        <span class="history-date">
+          ${formatDate(date)}
+        </span>
+
+      </div>
+
+      <div class="history-buttons">
+
+        <button type="button" onclick="editHistory(${index})">
+          ✏ Editar
+        </button>
+
+        <button type="button" onclick="deleteHistory(${index})">
+          🗑 Excluir
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
 
 
 // =========================
@@ -548,143 +488,60 @@ function renderHistory() {
 
   history.forEach((item, index) => {
 
-    // =====================
-    // LAVAGEM
-    // =====================
-
     if (item.type === "wash") {
 
-      washHistory.innerHTML += `
-
-        <div class="history-item">
-
-          <p>
-            🚿 ${formatDate(item.date)}
-          </p>
-
-          <div class="history-buttons">
-
-            <button type="button" onclick="editHistory(${index})">
-              ✏ Editar
-            </button>
-
-            <button type="button" onclick="deleteHistory(${index})">
-              🗑 Excluir
-            </button>
-
-          </div>
-
-        </div>
-
-      `;
+      washHistory.innerHTML +=
+        createHistoryItem(
+          "🚿 Lavagem",
+          item.date,
+          index
+        );
 
     }
 
-
-    // =====================
-    // ETAPAS
-    // =====================
 
     if (item.type === "step") {
 
-      stepHistory.innerHTML += `
-
-        <div class="history-item">
-
-          <p>
-            ${getStepName(item.step)}
-            <br>
-            ${formatDate(item.date)}
-          </p>
-
-          <div class="history-buttons">
-
-            <button type="button" onclick="editHistory(${index})">
-              ✏ Editar
-            </button>
-
-            <button type="button" onclick="deleteHistory(${index})">
-              🗑 Excluir
-            </button>
-
-          </div>
-
-        </div>
-
-      `;
+      stepHistory.innerHTML +=
+        createHistoryItem(
+          getStepName(item.step),
+          item.date,
+          index
+        );
 
     }
 
-
-    // =====================
-    // TÔNICO
-    // =====================
 
     if (item.type === "tonic") {
 
-      tonicHistory.innerHTML += `
-
-        <div class="history-item">
-
-          <p>
-            🌱 Aplicado
-            <br>
-            ${formatDate(item.date)}
-          </p>
-
-          <div class="history-buttons">
-
-            <button type="button" onclick="editHistory(${index})">
-              ✏ Editar
-            </button>
-
-            <button type="button" onclick="deleteHistory(${index})">
-              🗑 Excluir
-            </button>
-
-          </div>
-
-        </div>
-
-      `;
+      tonicHistory.innerHTML +=
+        createHistoryItem(
+          "🌱 Tônico",
+          item.date,
+          index
+        );
 
     }
 
-
-    // =====================
-    // ANTICONCEPCIONAL
-    // =====================
 
     if (
       birthControlHistory &&
       item.type === "birthControl"
     ) {
 
-      birthControlHistory.innerHTML += `
+      const label =
+        `💊 ${item.day || "CP"}`;
 
-        <div class="history-item">
+      const extraClass =
+        item.isLate ? "history-late" : "";
 
-          <p>
-            💊 ${item.day || "Tomado"}
-            <br>
-            ${formatDate(item.date)}
-          </p>
-
-          <div class="history-buttons">
-
-            <button type="button" onclick="editHistory(${index})">
-              ✏ Editar
-            </button>
-
-            <button type="button" onclick="deleteHistory(${index})">
-              🗑 Excluir
-            </button>
-
-          </div>
-
-        </div>
-
-      `;
+      birthControlHistory.innerHTML +=
+        createHistoryItem(
+          label,
+          item.date,
+          index,
+          extraClass
+        );
 
     }
 
