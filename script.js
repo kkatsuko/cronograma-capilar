@@ -1204,6 +1204,19 @@ function getCurrentCycleStartDate() {
 
 function getPendingBirthControlPill() {
 
+  const config =
+    hairSettings?.birthControl;
+
+  if (
+    !config ||
+    !config.startDate ||
+    !config.pillCount
+  ) {
+
+    return null;
+
+  }
+
   const cycleStart =
     getCurrentCycleStartDate();
 
@@ -1214,8 +1227,18 @@ function getPendingBirthControlPill() {
   const today =
     new Date();
 
+  const trackingStart =
+    config.trackingStartDate
+      ? getLocalDateFromInput(config.trackingStartDate)
+      : cycleStart;
+
   const currentDate =
-    new Date(cycleStart);
+    new Date(
+      Math.max(
+        cycleStart.getTime(),
+        trackingStart.getTime()
+      )
+    );
 
   while (currentDate <= today) {
 
@@ -1243,6 +1266,7 @@ function getPendingBirthControlPill() {
   return null;
 
 }
+
 
 
 function updateBirthControlStatus() {
