@@ -450,10 +450,11 @@ saveSettingsBtn.addEventListener("click", () => {
     },
 
     birthControl: {
-      startDate: calculatedStartDateString,
-      currentPillToday: currentPillToday,
-      pillCount: pillCount,
-      pauseDays: pauseDays
+  startDate: calculatedStartDateString,
+  trackingStartDate: formatLocalDateKey(new Date()),
+  currentPillToday: currentPillToday,
+  pillCount: pillCount,
+  pauseDays: pauseDays
     }
 
   };
